@@ -44,10 +44,11 @@ void shr16_write(uint16_t v)
  * Enable LEDs, active high
  *
  * @param led: bit mask with
- *   bit0 = red led of first extruder (0)
- *   bit0 = green led of first extruder (0)
- *   alternating red-green until
- *   bit9 = green LED of last extruder (4)
+ * // TODO 2: double check documentation
+ *   bit0 = green led of last extruder (0)
+ *   bit0 = red led of last extruder (0)
+ *   alternating green-red until
+ *   bit9 = red LED of first extruder (4)
  */
 void shr16_set_led(uint16_t led) // TODO 2: provide macros with easily readable names
 {
