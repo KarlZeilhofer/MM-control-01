@@ -19,3 +19,5 @@ MM-control-01\.creator\.user
 \.pioenvs/
 
 platformio\.pro\.user
+
+MM-control-01\.ino\.cpp
