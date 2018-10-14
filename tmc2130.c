@@ -233,16 +233,18 @@ uint8_t tmc2130_usteps2mres(uint16_t usteps)
 // byte 1 bit 0..5 - curh
 // byte 2 bit 0..5 - curr
 // byte 3
-int8_t tmc2130_init_axis(uint8_t axis, uint8_t homing)
+int8_t tmc2130_init_axis(uint8_t axis, bool homing)
 {
 	/* //silent mode
-			tmc2130_setup_chopper(axis, 7, 16, 16);
-			tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
-			tmc2130_wr(axis, TMC2130_REG_COOLCONF, (((uint32_t)TMC2130_SG_THR) << 16));
-			tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, 0);
-			tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00000004);
-			tmc2130_wr_PWMCONF(axis, 150, 2, 2, 1, 0, 0);
-			tmc2130_wr_TPWMTHRS(axis, 0);
+		tmc2130_setup_chopper(axis, 7, 16, 16);
+		tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN,
+		0x00000000);
+		tmc2130_wr(axis, TMC2130_REG_COOLCONF,
+		(((uint32_t)TMC2130_SG_THR) << 16));
+		tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, 0);
+		tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00000004);
+		tmc2130_wr_PWMCONF(axis, 150, 2, 2, 1, 0, 0);
+		tmc2130_wr_TPWMTHRS(axis, 0);
 	*/
 	// uint8_t mres = 7;
 	// uint16_t tcoolthrs = 450;
@@ -261,6 +263,13 @@ int8_t tmc2130_init_axis(uint8_t axis, uint8_t homing)
 	return 0;
 }
 
+/**
+ * @brief tmc2130_init_axis_current
+ * @param axis
+ * @param current_h
+ * @param current_r
+ * @return
+ */
 int8_t tmc2130_init_axis_current(uint8_t axis, uint8_t current_h, uint8_t current_r)
 {
 
@@ -278,28 +287,28 @@ int8_t tmc2130_init_axis_current(uint8_t axis, uint8_t current_h, uint8_t curren
 uint8_t tmc2130_check_axis(uint8_t axis) { return 0x3f; }
 #endif
 
-int8_t tmc2130_init(uint8_t homing)
+int8_t tmc2130_init(bool homing)
 {
-	DDRC |= 0x40;
-	DDRD |= 0x80;
-	DDRB |= 0x80;
+	DDRC |= 0x40; // C6
+	DDRD |= 0x80; // D7
+	DDRB |= 0x80; // B7
 
-	PORTC |= 0x40;
-	PORTD |= 0x80;
-	PORTB |= 0x80;
+	PORTC |= 0x40; // C6
+	PORTD |= 0x80; // D7
+	PORTB |= 0x80; // B7
 
-	DDRD |= 0x10;
-	DDRB |= 0x10;
-	DDRD |= 0x40;
+	DDRD |= 0x10; // D4, step selector
+	DDRB |= 0x10; // B4, step pulley
+	DDRD |= 0x40; // D6, step idler
 
-	PORTD &= ~0x10;
-	PORTB &= ~0x10;
-	PORTD &= ~0x40;
+	PIN_STP_SEL_LOW;
+	PIN_STP_PUL_LOW;
+	PIN_STP_IDL_LOW;
 
 	int8_t ret = 0;
-	ret += tmc2130_init_axis(0, homing) ? -1 : 0;
-	ret += tmc2130_init_axis(1, homing) ? -2 : 0;
-	ret += tmc2130_init_axis(2, homing) ? -4 : 0;
+	ret += tmc2130_init_axis(AX_PUL, homing) ? -1 : 0;
+	ret += tmc2130_init_axis(AX_SEL, homing) ? -2 : 0;
+	ret += tmc2130_init_axis(AX_IDL, homing) ? -4 : 0;
 
 	return ret;
 }

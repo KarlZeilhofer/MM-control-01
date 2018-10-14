@@ -30,7 +30,7 @@ bool feed_filament()
 	park_idler(true);
 
 	set_pulley_dir_push();
-	tmc2130_init_axis_current(0, 1, 15);
+	tmc2130_init_axis_current(AX_PUL, 1, 15);
 
 	do {
 		do_pulley_step();
@@ -66,7 +66,7 @@ bool feed_filament()
 		}
 	}
 
-	tmc2130_init_axis_current(0, 0, 0);
+	tmc2130_init_axis_current(AX_PUL, 0, 0);
 	park_idler(false);
 	shr16_set_led(1 << 2 * (4 - active_extruder));
 	return true;

@@ -55,11 +55,14 @@ void set_positions(int _current_extruder, int _next_extruder)
 	move_proportional(_idler_steps, _selector_steps);
 }
 
+/**
+ * @brief Eject Filament
+ * move selector sideways and push filament forward little bit, so user can catch it,
+ * unpark idler at the end to user can pull filament out
+ * @param extruder
+ */
 void eject_filament(int extruder)
 {
-	// move selector sideways and push filament forward little bit, so user can catch it, unpark idler at the end to
-	// user can pull filament out
-
 	int selector_position = 0;
 	int steps = 0;
 
@@ -72,7 +75,7 @@ void eject_filament(int extruder)
 
 	if (isIdlerParked)
 		park_idler(true); // if idler is in parked position un-park him get in contact with filament
-	tmc2130_init_axis_current(0, 1, 30);
+	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	// if we are want to eject fil 0-2, move seelctor to position 4 (right), if we want to eject filament 3 - 4, move
 	// selector to position 0 (left)
@@ -102,16 +105,16 @@ void eject_filament(int extruder)
 
 	// unpark idler so user can easily remove filament
 	park_idler(false);
-	tmc2130_init_axis_current(0, 0, 0);
+	tmc2130_init_axis_current(AX_PUL, 0, 0);
 }
 
 void recover_after_eject()
 {
 	// restore state before eject filament
 	// if (isIdlerParked) park_idler(true); // if idler is in parked position un-park him get in contact with filament
-	tmc2130_init_axis_current(0, 1, 30);
+	tmc2130_init_axis_current(AX_PUL, 1, 30);
 	move_proportional(-idler_steps_for_eject, -selector_steps_for_eject);
-	tmc2130_init_axis_current(0, 0, 0);
+	tmc2130_init_axis_current(AX_PUL, 0, 0);
 	// unpark idler
 	// park_idler(false);
 }
@@ -120,7 +123,7 @@ void load_filament_withSensor()
 {
 	if (isIdlerParked)
 		park_idler(true); // if idler is in parked position un-park him get in contact with filament
-	tmc2130_init_axis_current(0, 1, 30);
+	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	set_pulley_dir_push();
 
@@ -243,14 +246,17 @@ void load_filament_withSensor()
 		}
 	}
 
-	tmc2130_init_axis_current(0, 0, 0);
+	tmc2130_init_axis_current(AX_PUL, 0, 0);
 	isFilamentLoaded = true; // filament loaded
 }
 
+/**
+ * @brief unload_filament_withSensor
+ * unloads filament from extruder - filament is above Bondtech gears
+ */
 void unload_filament_withSensor()
 {
-	// unloads filament from extruder - filament is above Bondtech gears
-	tmc2130_init_axis_current(0, 1, 30);
+	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	if (isIdlerParked)
 		park_idler(true); // if idler is in parked position un-park him get in contact with filament
@@ -379,7 +385,7 @@ void unload_filament_withSensor()
 		}
 	}
 	park_idler(false);
-	tmc2130_init_axis_current(0, 0, 0);
+	tmc2130_init_axis_current(AX_PUL, 0, 0);
 	isFilamentLoaded = false; // filament unloaded
 }
 
@@ -392,24 +398,24 @@ void load_filament_inPrinter()
 	set_pulley_dir_push();
 
 	// PLA
-	tmc2130_init_axis_current(0, 1, 15);
+	tmc2130_init_axis_current(AX_PUL, 1, 15);
 	for (int i = 0; i <= 320; i++) {
 		if (i == 150) {
-			tmc2130_init_axis_current(0, 1, 10);
+			tmc2130_init_axis_current(AX_PUL, 1, 10);
 		};
 		do_pulley_step();
 		delayMicroseconds(2600);
 	}
 
 	// PLA
-	tmc2130_init_axis_current(0, 1, 3);
+	tmc2130_init_axis_current(AX_PUL, 1, 3);
 	for (int i = 0; i <= 450; i++) {
 		do_pulley_step();
 		delayMicroseconds(2200);
 	}
 
 	park_idler(false);
-	tmc2130_init_axis_current(0, 0, 0);
+	tmc2130_init_axis_current(AX_PUL, 0, 0);
 }
 
 void init_Pulley()
@@ -433,17 +439,17 @@ void init_Pulley()
 
 void do_pulley_step()
 {
-	PORTB |= 0x10;
+	PIN_STP_PUL_HIGH;
 	asm("nop");
-	PORTB &= ~0x10;
+	PIN_STP_PUL_LOW;
 	asm("nop");
 }
 
 void do_idler_step()
 {
-	PORTD |= 0x40;
+	PIN_STP_IDL_HIGH;
 	asm("nop");
-	PORTD &= ~0x40;
+	PIN_STP_IDL_LOW;
 	asm("nop");
 }
 
@@ -473,7 +479,7 @@ bool home_idler()
 		for (int i = 0; i < 2000; i++) {
 			move(1, 0, 0);
 			delayMicroseconds(100);
-			tmc2130_read_sg(0);
+			tmc2130_read_sg(AX_IDL);
 
 			_c++;
 			if (i == 1000) {
@@ -503,7 +509,7 @@ bool home_selector()
 		delay(50);
 		for (int i = 0; i < 4000; i++) {
 			move(0, 1, 0);
-			uint16_t sg = tmc2130_read_sg(1);
+			uint16_t sg = tmc2130_read_sg(AX_SEL);
 			if ((i > 16) && (sg < 10))
 				break;
 
@@ -562,24 +568,24 @@ void move_proportional(int _idler, int _selector)
 	do {
 		if (_idler_pos >= 1) {
 			if (_idler > 0) {
-				PORTD |= 0x40;
+				PIN_STP_IDL_HIGH;
 			}
 		}
 		if (_selector > 0) {
-			PORTD |= 0x10;
+			PIN_STP_SEL_HIGH;
 		}
 
 		asm("nop");
 
 		if (_idler_pos >= 1) {
 			if (_idler > 0) {
-				PORTD &= ~0x40;
+				PIN_STP_IDL_LOW;
 				_idler--;
 			}
 		}
 
 		if (_selector > 0) {
-			PORTD &= ~0x10;
+			PIN_STP_SEL_LOW;
 			_selector--;
 		}
 		asm("nop");
@@ -612,27 +618,27 @@ void move(int _idler, int _selector, int _pulley)
 
 	do {
 		if (_idler > 0) {
-			PORTD |= 0x40;
+			PIN_STP_IDL_HIGH;
 		}
 		if (_selector > 0) {
-			PORTD |= 0x10;
+			PIN_STP_SEL_HIGH;
 		}
 		if (_pulley > 0) {
-			PORTB |= 0x10;
+			PIN_STP_PUL_HIGH;
 		}
 		asm("nop");
 		if (_idler > 0) {
-			PORTD &= ~0x40;
+			PIN_STP_IDL_LOW;
 			_idler--;
 			delayMicroseconds(1000);
 		}
 		if (_selector > 0) {
-			PORTD &= ~0x10;
+			PIN_STP_SEL_LOW;
 			_selector--;
 			delayMicroseconds(800);
 		}
 		if (_pulley > 0) {
-			PORTB &= ~0x10;
+			PIN_STP_PUL_LOW;
 			_pulley--;
 			delayMicroseconds(700);
 		}

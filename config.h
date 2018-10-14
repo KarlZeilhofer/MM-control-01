@@ -70,9 +70,13 @@
 #define AX_PUL 0 // Pulley (Filament Drive)
 #define AX_SEL 1 // Selector
 #define AX_IDL 2 // Idler
-// 0 - IDLER
-// 1 - SELECTOR
-// 2 - PULLEY
+
+#define PIN_STP_IDL_HIGH (PORTD |= 0x40)
+#define PIN_STP_IDL_LOW (PORTD &= ~0x40)
+#define PIN_STP_SEL_HIGH (PORTD_ |= 0x10)
+#define PIN_STP_SEL_LOW (PORTD_ &= ~0x10)
+#define PIN_STP_PUL_HIGH (PORTB |= 0x10)
+#define PIN_STP_PUL_LOW (PORTB &= ~0x10)
 
 // ADC configuration
 #define ADC_CHAN_MSK 0b0000000000100000 // used AD channels bit mask (ADC5)

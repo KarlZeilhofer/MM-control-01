@@ -79,7 +79,7 @@ void setup()
 	spi_init();
 	led_blink(2);
 
-	tmc2130_init(1); // trinamic
+	tmc2130_init(true); // trinamic
 	led_blink(3);
 
 	adc_init(); // ADC
@@ -105,7 +105,7 @@ void setup()
 	}
 
 	home();
-	tmc2130_init(0); // trinamic
+	tmc2130_init(false); // trinamic
 
 	// check if to goto the settings menu
 	if (buttonClicked() == Btn::middle) {

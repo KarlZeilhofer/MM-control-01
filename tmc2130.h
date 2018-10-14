@@ -3,6 +3,7 @@
 #define _TMC2130_H
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include "config.h"
 
 #define TMC2130_SG_THR 4      // SG_THR default
@@ -20,14 +21,14 @@
 extern "C" {
 #endif // defined(__cplusplus)
 
-extern int8_t tmc2130_init(uint8_t homing);
+int8_t tmc2130_init(bool homing);
 
-extern int8_t tmc2130_init_axis(uint8_t axis, uint8_t homing);
-extern int8_t tmc2130_init_axis_current(uint8_t axis, uint8_t current_h, uint8_t current_r);
+int8_t tmc2130_init_axis(uint8_t axis, bool homing);
+int8_t tmc2130_init_axis_current(uint8_t axis, uint8_t current_h, uint8_t current_r);
 
-extern uint8_t tmc2130_check_axis(uint8_t axis);
+uint8_t tmc2130_check_axis(uint8_t axis);
 
-extern uint16_t tmc2130_read_sg(uint8_t axis);
+uint16_t tmc2130_read_sg(uint8_t axis);
 
 #if defined(__cplusplus)
 }
