@@ -465,11 +465,11 @@ void do_idler_step()
  */
 void engage_filament_pully(bool engage)
 {
-	if (engage) // get idler in contact with filament
+	if (isIdlerParked && engage) // get idler in contact with filament
 	{
 		move(IDLER_PARKING_STEPS, 0, 0);
 		isIdlerParked = false;
-	} else // park idler so filament can move freely
+	} else if(!isIdlerParked && !engage) // park idler so filament can move freely
 	{
 		move(IDLER_PARKING_STEPS * -1, 0, 0);
 		isIdlerParked = true;
