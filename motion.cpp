@@ -73,8 +73,8 @@ void eject_filament(int extruder)
 	if (isFilamentLoaded)
 		unload_filament_withSensor();
 
-	if (isIdlerParked)
-		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
+
+	engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	// if we are want to eject fil 0-2, move seelctor to position 4 (right), if we want to eject filament 3 - 4, move
@@ -121,8 +121,8 @@ void recover_after_eject()
 
 void load_filament_withSensor()
 {
-	if (isIdlerParked)
-		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
+
+	engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	set_pulley_dir_push();
@@ -258,8 +258,8 @@ void unload_filament_withSensor()
 {
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
-	if (isIdlerParked)
-		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
+
+	engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 
 	set_pulley_dir_pull();
 
@@ -372,7 +372,6 @@ void unload_filament_withSensor()
 		} while (!_continue);
 
 		shr16_set_led(1 << 2 * (4 - previous_extruder));
-		engage_filament_pully(true);
 	} else {
 		// correct unloading
 		_speed = 5000;
@@ -396,8 +395,8 @@ void unload_filament_withSensor()
  */
 void load_filament_intoExtruder()
 {
-	if (isIdlerParked)
-		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
+
+	engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	set_pulley_dir_push();
 
 	// PLA

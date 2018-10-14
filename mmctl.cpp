@@ -154,8 +154,7 @@ bool select_extruder(int new_extruder)
 			if (previous_extruder == 5) {
 				move(0, -700, 0);
 			} else {
-				if (isIdlerParked)
-					engage_filament_pully(true);
+				engage_filament_pully(true);
 				set_positions(previous_extruder, active_extruder); // move idler and selector to new filament position
 				engage_filament_pully(false);
 			}
