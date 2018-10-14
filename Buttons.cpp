@@ -12,7 +12,6 @@ const int ButtonPin = A2;
 
 void settings_bowden_length();
 
-
 //!	@brief Select filament for bowden length calibration
 //!
 //! Filaments are selected by left and right buttons, calibration is activated by middle button.
@@ -21,19 +20,16 @@ void settings_bowden_length();
 //!
 void settings_select_filament()
 {
-	while (1)
-	{
+	while (1) {
 		manual_extruder_selector();
 
-		if(Btn::middle == buttonClicked())
-		{
+		if (Btn::middle == buttonClicked()) {
 			shr16_set_led(2 << 2 * (4 - active_extruder));
 			delay(500);
-			if (Btn::middle == buttonClicked())
-			{
-				if (active_extruder < 5) settings_bowden_length();
-				else
-				{
+			if (Btn::middle == buttonClicked()) {
+				if (active_extruder < 5)
+					settings_bowden_length();
+				else {
 					select_extruder(4);
 					select_extruder(0);
 					return;
@@ -75,10 +71,7 @@ void setupMenu()
 	bool _exit = false;
 	bool eraseLocked = true;
 
-		
-
-	do
-	{
+	do {
 		shr16_set_led(1 << 2 * 4);
 		delay(1);
 		shr16_set_led(2 << 2 * 4);
@@ -86,43 +79,45 @@ void setupMenu()
 		shr16_set_led(2 << 2 * _menu);
 		delay(1);
 
-		switch (buttonClicked())
-		{
+		switch (buttonClicked()) {
 		case Btn::right:
-			if (_menu > 0) { _menu--; delay(800); }
+			if (_menu > 0) {
+				_menu--;
+				delay(800);
+			}
 			break;
 		case Btn::middle:
-				
-			switch (_menu)
-			{
-				case 1:
-					settings_select_filament();
+
+			switch (_menu) {
+			case 1:
+				settings_select_filament();
+				_exit = true;
+				break;
+			case 2:
+				if (!eraseLocked) {
+					BowdenLength::eraseAll();
 					_exit = true;
-					break;
-				case 2:
-					if (!eraseLocked)
-					{
-						BowdenLength::eraseAll();
-						_exit = true;
-					}
-					break;
-				case 3: //unlock erase
-					eraseLocked = false;
-					break;
-				case 4: // exit menu
-					_exit = true;
-					break;
+				}
+				break;
+			case 3: // unlock erase
+				eraseLocked = false;
+				break;
+			case 4: // exit menu
+				_exit = true;
+				break;
 			}
 			break;
 		case Btn::left:
-			if (_menu < 4) { _menu++; delay(800); }
+			if (_menu < 4) {
+				_menu++;
+				delay(800);
+			}
 			break;
 		default:
 			break;
 		}
-		
-	} while (!_exit);
 
+	} while (!_exit);
 
 	shr16_set_led(0x000);
 	delay(400);
@@ -158,28 +153,23 @@ void setupMenu()
 void settings_bowden_length()
 {
 	// load filament above Bondtech gears to check correct length of bowden tube
-	if (!isFilamentLoaded)
-	{
+	if (!isFilamentLoaded) {
 		BowdenLength bowdenLength;
 		load_filament_withSensor();
 
 		tmc2130_init_axis_current(0, 1, 30);
-		do
-		{
+		do {
 
-			switch (buttonClicked())
-			{
+			switch (buttonClicked()) {
 			case Btn::right:
-				if (bowdenLength.decrease())
-				{
+				if (bowdenLength.decrease()) {
 					move(0, 0, -bowdenLength.stepSize);
 					delay(400);
 				}
 				break;
 
 			case Btn::left:
-				if (bowdenLength.increase())
-				{
+				if (bowdenLength.increase()) {
 					move(0, 0, bowdenLength.stepSize);
 					delay(400);
 				}
@@ -195,7 +185,6 @@ void settings_bowden_length()
 			shr16_set_led(2 << 2 * 1);
 			delay(50);
 
-
 		} while (buttonClicked() != Btn::middle);
 
 		unload_filament_withSensor();
@@ -209,10 +198,12 @@ Btn buttonClicked()
 {
 	int raw = analogRead(ButtonPin);
 
-	if (raw < 50) return Btn::right;
-	if (raw > 80 && raw < 100) return Btn::middle;
-	if (raw > 160 && raw < 180) return Btn::left;
+	if (raw < 50)
+		return Btn::right;
+	if (raw > 80 && raw < 100)
+		return Btn::middle;
+	if (raw > 160 && raw < 180)
+		return Btn::left;
 
 	return Btn::none;
 }
-

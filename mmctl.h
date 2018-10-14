@@ -1,4 +1,4 @@
-//mmctl.h - multimaterial switcher control
+// mmctl.h - multimaterial switcher control
 #ifndef _MMCTL_H
 #define _MMCTL_H
 
@@ -14,7 +14,6 @@ extern int previous_extruder;
 extern bool isFilamentLoaded;
 extern bool isIdlerParked;
 
-
 extern bool home_idler();
 extern bool home_selector();
 
@@ -26,6 +25,5 @@ extern bool service_position();
 extern bool feed_filament();
 
 void led_blink(int _no);
-
 
 #endif //_MMCTL_H

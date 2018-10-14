@@ -9,9 +9,8 @@
 extern void home();
 extern bool home_idler();
 extern bool home_selector();
- 
-extern int8_t filament_type[EXTRUDERS];
 
+extern int8_t filament_type[EXTRUDERS];
 
 void park_idler(bool _unpark);
 
@@ -32,7 +31,4 @@ void move_proportional(int _idler, int _selector);
 void eject_filament(int extruder);
 void recover_after_eject();
 
-
-
 #endif
-

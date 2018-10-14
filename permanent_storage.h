@@ -20,12 +20,10 @@ public:
 	bool increase();
 	bool decrease();
 	~BowdenLength();
+
 private:
 	uint8_t m_filament; //!< Selected filament
 	uint16_t m_length;  //!< Selected filament bowden length
 };
-
-
-
 
 #endif /* PERMANENT_STORAGE_H_ */

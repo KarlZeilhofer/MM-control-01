@@ -1,8 +1,7 @@
-//shr16.c - 16bit shift register (2x74595)
+// shr16.c - 16bit shift register (2x74595)
 
 #include "shr16.h"
 #include <avr/io.h>
-
 
 uint16_t shr16_v;
 
@@ -23,8 +22,8 @@ void shr16_write(uint16_t v)
 {
 	PORTB &= ~0x40;
 	asm("nop");
-	uint16_t m; for (m = 0x8000; m; m >>= 1)
-	{
+	uint16_t m;
+	for (m = 0x8000; m; m >>= 1) {
 		if (m & v)
 			PORTB |= 0x20;
 		else
@@ -58,12 +57,6 @@ void shr16_set_dir(uint8_t dir)
 	shr16_write((shr16_v & ~SHR16_DIR_MSK) | dir);
 }
 
-uint8_t shr16_get_ena(void)
-{
-	return ((shr16_v & 2) >> 1) | ((shr16_v & 8) >> 2) | ((shr16_v & 0x20) >> 3);
-}
+uint8_t shr16_get_ena(void) { return ((shr16_v & 2) >> 1) | ((shr16_v & 8) >> 2) | ((shr16_v & 0x20) >> 3); }
 
-uint8_t shr16_get_dir(void)
-{
-	return (shr16_v & 1) | ((shr16_v & 4) >> 1) | ((shr16_v & 0x10) >> 2);
-}
+uint8_t shr16_get_dir(void) { return (shr16_v & 1) | ((shr16_v & 4) >> 1) | ((shr16_v & 0x10) >> 2); }
