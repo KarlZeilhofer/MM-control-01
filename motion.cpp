@@ -389,10 +389,13 @@ void unload_filament_withSensor()
 	isFilamentLoaded = false; // filament unloaded
 }
 
+/**
+ * @brief load_filament_intoExtruder
+ * loads filament after confirmed by printer into the Bontech
+ * pulley gears so they can grab them
+ */
 void load_filament_intoExtruder()
 {
-	// loads filament after confirmed by printer into the Bontech pulley gears so they can grab them
-
 	if (isIdlerParked)
 		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	set_pulley_dir_push();
@@ -458,7 +461,7 @@ void do_idler_step()
  * Turns the idler drum to engage or disengage the filament pully
  * @param engage
  * If true, pully can drive the filament afterwards
- * if false, idler is parked, so the filament can move freely
+ * if false, idler will be parked, so the filament can move freely
  */
 void engage_filament_pully(bool engage)
 {
