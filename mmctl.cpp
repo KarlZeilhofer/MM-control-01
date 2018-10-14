@@ -22,10 +22,6 @@ bool isHomed = false;
 // private variables:
 static int toolChanges = 0;
 
-
-// private functions:
-static void led_blink(int _no);
-
 bool feed_filament()
 {
 	bool _feed = true;
