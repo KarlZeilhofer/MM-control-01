@@ -98,26 +98,42 @@ void tmc2130_wr_PWMCONF(uint8_t axis, uint8_t pwm_ampl, uint8_t pwm_grad, uint8_
 
 void tmc2130_wr_TPWMTHRS(uint8_t axis, uint32_t val32) { tmc2130_wr(axis, TMC2130_REG_TPWMTHRS, val32); }
 
+/**
+ * @brief tmc2130_setup_chopper
+ * Sets up the copper configuration register
+ *
+ * @param axis: 0..2
+ * @param mres: micro steps per full step (1,2,4,8,16,32,64,128 or 256)
+ * @param current_h: hold current 0...63 (15mA...960mA RMS, @ R_sens = 0.22 Ohm)
+ * @param current_r: run current 0...63 (15mA...960mA RMS, @ R_sens = 0.22 Ohm)
+ * @return zero on success,
+ */
 int8_t tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint8_t current_r)
 {
 	uint8_t intpol = 1;
-	uint8_t toff = 3; // toff = 3 (fchop = 27.778kHz)
+	uint8_t toff = 3;  // toff = 3 (fchop = 27.778kHz)
 	uint8_t hstrt = 5; // initial 4, modified to 5
 	uint8_t hend = 1;
 	uint8_t fd3 = 0;
 	uint8_t rndtf = 0; // random off time
-	uint8_t chm = 0; // spreadCycle
-	uint8_t tbl = 2; // blanking time
+	uint8_t chm = 0;   // spreadCycle
+	uint8_t tbl = 2;   // blanking time
+
+	// distinguish small and large current values and set the vsens bit accordingly.
+	// the current registers allow only values between 0 and 31 (5 bit)
 	if (current_r <= 31) {
-		if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, 1, 0, 0, 0, mres, intpol, 0, 0))
+		uint8_t vsens = 1; // high sensitivity of current measurement
+		if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, vsens, 0, 0, 0, mres, intpol, 0, 0))
 			return -1;
-		tmc2130_wr(axis, TMC2130_REG_IHOLD_IRUN, 0x000f0000 | ((current_r & 0x1f) << 8) | (current_h & 0x1f));
 	} else {
-		if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, 0, 0, 0, 0, mres, intpol, 0, 0))
+		uint8_t vsens = 0; // low sensitivity of current measurement
+		current_r /= 2; // scale current to 0..31
+		current_h /= 2; // scale current to 0..31
+
+		if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, vsens, 0, 0, 0, mres, intpol, 0, 0))
 			return -1;
-		tmc2130_wr(axis, TMC2130_REG_IHOLD_IRUN,
-				   0x000f0000 | (((current_r >> 1) & 0x1f) << 8) | ((current_h >> 1) & 0x1f));
 	}
+	tmc2130_wr(axis, TMC2130_REG_IHOLD_IRUN, 0x000f0000 | ((current_r & 0x1f) << 8) | (current_h & 0x1f));
 	return 0;
 }
 
