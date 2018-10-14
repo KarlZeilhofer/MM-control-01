@@ -20,7 +20,7 @@ typedef struct
 static eeprom_t *const EepromBase = reinterpret_cast<eeprom_t *>(0); //!< First EEPROM address
 static const uint16_t EepromEmpty = 0xffff;                          //!< EEPROM content when erased
 static const uint16_t EepromLengthCorrectionBase = 7900u;            //!< legacy bowden length correction base
-static const uint16_t EpromBowdenLenDefault = 8900u;                //!< Default bowden length
+static const uint16_t EepromBowdenLenDefault = 8900u;                //!< Default bowden length
 static const uint16_t EepromBowdenLenMinimum = 6900u;                //!< Minimum bowden length
 static const uint16_t RepromBowdenLenMaximum = 10900u;               //!< Maximum bowden length
 
@@ -66,7 +66,7 @@ uint16_t BowdenLength::get()
 			return bowdenLength;
 	}
 
-	return eepromBowdenLenDefault;
+	return EepromBowdenLenDefault;
 }
 
 //! @brief Construct BowdenLength object which allows bowden length manipulation

@@ -36,14 +36,11 @@ static int idler_steps_for_eject = 0;
 static int set_idler_direction(int _steps);
 static int set_selector_direction(int _steps);
 static int set_pulley_direction(int _steps);
-static void cut_filament();
 static void do_idler_step();
 static void set_idler_dir_down();
 static void set_idler_dir_up();
 
 bool checkOk();
-
-void cut_filament() {}
 
 void set_positions(int _current_extruder, int _next_extruder)
 {
@@ -447,13 +444,6 @@ void do_pulley_step()
 	asm("nop");
 }
 
-void do_idler_step()
-{
-	PIN_STP_IDL_HIGH;
-	asm("nop");
-	PIN_STP_IDL_LOW;
-	asm("nop");
-}
 
 /**
  * @brief engage_filament_pully

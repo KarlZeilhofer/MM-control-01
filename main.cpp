@@ -21,9 +21,6 @@
 int8_t sys_state = 0;
 uint8_t sys_signals = 0;
 
-// private variables:
-static int _loop = 0;
-static int _c = 0;
 
 #if (UART_COM == 0)
 FILE *uart_com = uart0io;
@@ -291,4 +288,9 @@ void process_commands(FILE *inout)
 	}
 }
 
-} // extern "C"
+}
+
+void process_signals()
+{
+	// what to do here?
+}

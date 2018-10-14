@@ -80,8 +80,8 @@
 
 #define PIN_STP_IDL_HIGH (PORTD |= 0x40)
 #define PIN_STP_IDL_LOW (PORTD &= ~0x40)
-#define PIN_STP_SEL_HIGH (PORTD_ |= 0x10)
-#define PIN_STP_SEL_LOW (PORTD_ &= ~0x10)
+#define PIN_STP_SEL_HIGH (PORTD |= 0x10)
+#define PIN_STP_SEL_LOW (PORTD &= ~0x10)
 #define PIN_STP_PUL_HIGH (PORTB |= 0x10)
 #define PIN_STP_PUL_LOW (PORTB &= ~0x10)
 
