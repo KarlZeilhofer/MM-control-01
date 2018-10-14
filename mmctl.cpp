@@ -11,14 +11,20 @@
 #include "motion.h"
 #include "Buttons.h"
 
-int active_extruder = -1;
+// public variables:
+int active_extruder = -1;  // extruder channel, 0...4
 int previous_extruder = -1;
 bool isFilamentLoaded = false;
 bool isIdlerParked = false;
-int toolChanges = 0;
-
 bool isPrinting = false;
 bool isHomed = false;
+
+// private variables:
+static int toolChanges = 0;
+
+
+// private functions:
+static void led_blink(int _no);
 
 bool feed_filament()
 {

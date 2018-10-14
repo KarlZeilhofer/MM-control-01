@@ -18,9 +18,15 @@ enum class Btn : uint8_t {
 	left = 4,
 };
 
-inline Btn operator|(Btn a, Btn b) { return static_cast<Btn>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b)); }
+inline Btn operator|(Btn a, Btn b)
+{
+	return static_cast<Btn>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+}
 
-inline bool operator&(Btn a, Btn b) { return static_cast<uint8_t>(a) & static_cast<uint8_t>(b); }
+inline bool operator&(Btn a, Btn b)
+{
+	return static_cast<uint8_t>(a) & static_cast<uint8_t>(b);
+}
 
 void setupMenu();
 Btn buttonClicked();

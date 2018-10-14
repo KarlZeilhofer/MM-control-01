@@ -17,10 +17,13 @@
 #include <avr/wdt.h>
 #include "permanent_storage.h"
 
+// public variables:
 int8_t sys_state = 0;
 uint8_t sys_signals = 0;
-int _loop = 0;
-int _c = 0;
+
+// private variables:
+static int _loop = 0;
+static int _c = 0;
 
 #if (UART_COM == 0)
 FILE *uart_com = uart0io;
@@ -268,7 +271,7 @@ void process_commands(FILE *inout)
 			if (value == 0) // C0 continue loading current filament (used after T-code), maybe add different code for
 							// each extruder (the same way as T-codes) in the future?
 			{
-				load_filament_inPrinter();
+				load_filament_intoExtruder();
 				fprintf_P(inout, PSTR("ok\n"));
 			}
 		} else if (sscanf_P(line, PSTR("E%d"), &value) > 0) {

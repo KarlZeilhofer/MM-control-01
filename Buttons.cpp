@@ -8,7 +8,7 @@
 #include "permanent_storage.h"
 #include "main.h"
 
-const int ButtonPin = A2;
+const int ButtonPin = A2; // we use an analog input with different DC-levels for each button
 
 void settings_bowden_length();
 
@@ -163,14 +163,14 @@ void settings_bowden_length()
 			switch (buttonClicked()) {
 			case Btn::right:
 				if (bowdenLength.decrease()) {
-					move(0, 0, -bowdenLength.stepSize);
+					move(0, 0, -bowdenLength.StepSize);
 					delay(400);
 				}
 				break;
 
 			case Btn::left:
 				if (bowdenLength.increase()) {
-					move(0, 0, bowdenLength.stepSize);
+					move(0, 0, bowdenLength.StepSize);
 					delay(400);
 				}
 				break;

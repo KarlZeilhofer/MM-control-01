@@ -5,24 +5,25 @@
 
 #include "config.h"
 #include <inttypes.h>
-
-extern void home();
-extern bool home_idler();
-extern bool home_selector();
+#include <stdbool.h>
 
 extern int8_t filament_type[EXTRUDERS];
 
-void engage_filament_pully(bool _unpark);
+
+
+void home();
+bool home_idler();
+bool home_selector();
+void engage_filament_pully(bool engage);
 
 void load_filament_withSensor();
-void load_filament_inPrinter();
+void load_filament_intoExtruder();
+
 void unload_filament_withSensor();
 void set_positions(int _current_extruder, int _next_extruder);
 void init_Pulley();
 void do_pulley_step();
 
-void set_idler_dir_down();
-void set_idler_dir_up();
 void set_pulley_dir_pull();
 void set_pulley_dir_push();
 

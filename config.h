@@ -40,10 +40,10 @@
 #define SHR16_DIR_MSK 0x0015
 #define SHR16_ENA_MSK 0x002c
 
-// UART0
+// UART0 (USB)
 #define UART0_BDR 115200
 
-// UART1
+// UART1 (fullduplex 5V UART to master, i.e. Prusa i3, MK3)
 #define UART1_BDR 115200
 
 // stdin & stdout uart0/1

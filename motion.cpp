@@ -10,36 +10,36 @@
 #include "Buttons.h"
 #include "permanent_storage.h"
 
-const int selector_steps_after_homing = -3700;
-const int idler_steps_after_homing = -130;
-
-const int selector_steps = 2790 / 4;
-const int idler_steps = 1420 / 4;                       // 2 msteps = 180 / 4
-const int idler_parking_steps = (idler_steps / 2) + 40; // 40
-
-const int bowden_length = 1000;
-// endstop to tube  - 30 mm, 550 steps
-
-int selector_steps_for_eject = 0;
-int idler_steps_for_eject = 0;
-
+// public variables:
 int8_t filament_type[EXTRUDERS] = {-1, -1, -1, -1, -1};
 
-int set_idler_direction(int _steps);
-int set_selector_direction(int _steps);
-int set_pulley_direction(int _steps);
 
-void cut_filament();
+// private constants:
+// selector homes on the right end. afterwards it is moved to extruder 0
+static const int SELECTOR_STEPS_AFTER_HOMING = -3700;
+static const int IDLER_STEPS_AFTER_HOMING = -130;
 
-void engage_filament_pully(bool engage);
+static const int SELECTOR_STEPS = 2790 / 4;
+static const int IDLER_STEPS = 1420 / 4;                       // 2 msteps = 180 / 4
+static const int IDLER_PARKING_STEPS = (IDLER_STEPS / 2) + 40; // 40
 
-void load_filament_inPrinter();
-void load_filament_withSensor();
+static const int BOWDEN_LENGTH = 1000;
+// endstop to tube  - 30 mm, 550 steps
 
-void do_pulley_step();
-void do_idler_step();
 
-void set_positions(int _current_extruder, int _next_extruder);
+// private variables:
+static int selector_steps_for_eject = 0;
+static int idler_steps_for_eject = 0;
+
+
+// private functions:
+static int set_idler_direction(int _steps);
+static int set_selector_direction(int _steps);
+static int set_pulley_direction(int _steps);
+static void cut_filament();
+static void do_idler_step();
+static void set_idler_dir_down();
+static void set_idler_dir_up();
 
 bool checkOk();
 
@@ -48,8 +48,8 @@ void cut_filament() {}
 void set_positions(int _current_extruder, int _next_extruder)
 {
 	// steps to move to new position of idler and selector
-	int _selector_steps = ((_current_extruder - _next_extruder) * selector_steps) * -1;
-	int _idler_steps = (_current_extruder - _next_extruder) * idler_steps;
+	int _selector_steps = ((_current_extruder - _next_extruder) * SELECTOR_STEPS) * -1;
+	int _idler_steps = (_current_extruder - _next_extruder) * IDLER_STEPS;
 
 	// move both to new position
 	move_proportional(_idler_steps, _selector_steps);
@@ -59,7 +59,7 @@ void set_positions(int _current_extruder, int _next_extruder)
  * @brief Eject Filament
  * move selector sideways and push filament forward little bit, so user can catch it,
  * unpark idler at the end to user can pull filament out
- * @param extruder
+ * @param extruder: extruder channel (0..4)
  */
 void eject_filament(int extruder)
 {
@@ -90,8 +90,8 @@ void eject_filament(int extruder)
 	idler_offset_for_eject = active_extruder - extruder;
 
 	// count number of desired steps for selector and idler and store it in static variable
-	selector_steps_for_eject = (selector_offset_for_eject * selector_steps) * -1;
-	idler_steps_for_eject = idler_offset_for_eject * idler_steps;
+	selector_steps_for_eject = (selector_offset_for_eject * SELECTOR_STEPS) * -1;
+	idler_steps_for_eject = idler_offset_for_eject * IDLER_STEPS;
 
 	// move selector and idler to new position
 	move_proportional(idler_steps_for_eject, selector_steps_for_eject);
@@ -389,7 +389,7 @@ void unload_filament_withSensor()
 	isFilamentLoaded = false; // filament unloaded
 }
 
-void load_filament_inPrinter()
+void load_filament_intoExtruder()
 {
 	// loads filament after confirmed by printer into the Bontech pulley gears so they can grab them
 
@@ -464,11 +464,11 @@ void engage_filament_pully(bool engage)
 {
 	if (engage) // get idler in contact with filament
 	{
-		move(idler_parking_steps, 0, 0);
+		move(IDLER_PARKING_STEPS, 0, 0);
 		isIdlerParked = false;
 	} else // park idler so filament can move freely
 	{
-		move(idler_parking_steps * -1, 0, 0);
+		move(IDLER_PARKING_STEPS * -1, 0, 0);
 		isIdlerParked = true;
 	}
 }
@@ -546,7 +546,7 @@ void home()
 
 	shr16_set_led(0x155);
 
-	move(idler_steps_after_homing, selector_steps_after_homing, 0); // move to initial position
+	move(IDLER_STEPS_AFTER_HOMING, SELECTOR_STEPS_AFTER_HOMING, 0); // move to initial position
 
 	active_extruder = 0;
 

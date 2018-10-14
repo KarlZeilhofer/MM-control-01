@@ -15,7 +15,7 @@ class BowdenLength
 public:
 	static uint16_t get();
 	static void eraseAll();
-	static const uint8_t stepSize = 10u; //!< increase()/decrease() bowden length step size
+	static const uint8_t StepSize = 10u; //!< increase()/decrease() bowden length step size
 	BowdenLength();
 	bool increase();
 	bool decrease();

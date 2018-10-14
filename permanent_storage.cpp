@@ -4,6 +4,7 @@
 #include "permanent_storage.h"
 #include "mmctl.h"
 #include <avr/eeprom.h>
+#include "config.h"
 
 //! @brief EEPROM data layout
 //!
@@ -16,12 +17,12 @@ typedef struct
 	uint16_t eepromBowdenLen[5];    //!< Bowden length for each filament
 } eeprom_t;
 
-static eeprom_t *const eepromBase = reinterpret_cast<eeprom_t *>(0); //!< First EEPROM address
-static const uint16_t eepromEmpty = 0xffff;                          //!< EEPROM content when erased
-static const uint16_t eepromLengthCorrectionBase = 7900u;            //!< legacy bowden length correction base
-static const uint16_t eepromBowdenLenDefault = 8900u;                //!< Default bowden length
-static const uint16_t eepromBowdenLenMinimum = 6900u;                //!< Minimum bowden length
-static const uint16_t eepromBowdenLenMaximum = 10900u;               //!< Maximum bowden length
+static eeprom_t *const EepromBase = reinterpret_cast<eeprom_t *>(0); //!< First EEPROM address
+static const uint16_t EepromEmpty = 0xffff;                          //!< EEPROM content when erased
+static const uint16_t EepromLengthCorrectionBase = 7900u;            //!< legacy bowden length correction base
+static const uint16_t EpromBowdenLenDefault = 8900u;                //!< Default bowden length
+static const uint16_t EepromBowdenLenMinimum = 6900u;                //!< Minimum bowden length
+static const uint16_t RepromBowdenLenMaximum = 10900u;               //!< Maximum bowden length
 
 //! @brief Is filament number valid?
 //! @retval true valid
@@ -40,7 +41,7 @@ static bool validFilament(uint8_t filament)
 //! @retval false invalid
 static bool validBowdenLen(const uint16_t BowdenLength)
 {
-	if ((BowdenLength >= eepromBowdenLenMinimum) && BowdenLength <= eepromBowdenLenMaximum)
+	if ((BowdenLength >= EepromBowdenLenMinimum) && BowdenLength <= RepromBowdenLenMaximum)
 		return true;
 	return false;
 }
@@ -53,12 +54,12 @@ uint16_t BowdenLength::get()
 {
 	uint8_t filament = active_extruder;
 	if (validFilament(filament)) {
-		uint16_t bowdenLength = eeprom_read_word(&(eepromBase->eepromBowdenLen[filament]));
+		uint16_t bowdenLength = eeprom_read_word(&(EepromBase->eepromBowdenLen[filament]));
 
-		if (eepromEmpty == bowdenLength) {
-			const uint8_t LengthCorrectionLegacy = eeprom_read_byte(&(eepromBase->eepromLengthCorrection));
+		if (EepromEmpty == bowdenLength) {
+			const uint8_t LengthCorrectionLegacy = eeprom_read_byte(&(EepromBase->eepromLengthCorrection));
 			if (LengthCorrectionLegacy <= 200) {
-				bowdenLength = eepromLengthCorrectionBase + LengthCorrectionLegacy * 10;
+				bowdenLength = EepromLengthCorrectionBase + LengthCorrectionLegacy * 10;
 			}
 		}
 		if (validBowdenLen(bowdenLength))
@@ -85,8 +86,8 @@ BowdenLength::BowdenLength()
 //! @retval false failed, it is not possible to increase, new bowden length would be out of range
 bool BowdenLength::increase()
 {
-	if (validBowdenLen(m_length + stepSize)) {
-		m_length += stepSize;
+	if (validBowdenLen(m_length + StepSize)) {
+		m_length += StepSize;
 		return true;
 	}
 	return false;
@@ -99,8 +100,8 @@ bool BowdenLength::increase()
 //! @retval false failed, it is not possible to decrease, new bowden length would be out of range
 bool BowdenLength::decrease()
 {
-	if (validBowdenLen(m_length - stepSize)) {
-		m_length -= stepSize;
+	if (validBowdenLen(m_length - StepSize)) {
+		m_length -= StepSize;
 		return true;
 	}
 	return false;
@@ -110,13 +111,13 @@ bool BowdenLength::decrease()
 BowdenLength::~BowdenLength()
 {
 	if (validFilament(m_filament))
-		eeprom_update_word(&(eepromBase->eepromBowdenLen[m_filament]), m_length);
+		eeprom_update_word(&(EepromBase->eepromBowdenLen[m_filament]), m_length);
 }
 
 //! @brief Erase whole EEPROM
 void BowdenLength::eraseAll()
 {
 	for (uint16_t i = 0; i < 1024; i++) {
-		eeprom_update_byte((uint8_t *)i, static_cast<uint8_t>(eepromEmpty));
+		eeprom_update_byte((uint8_t *)i, static_cast<uint8_t>(EepromEmpty));
 	}
 }

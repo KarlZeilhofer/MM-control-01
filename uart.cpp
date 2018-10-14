@@ -3,8 +3,8 @@
 #include "uart.h"
 #include "Arduino.h"
 
+// public variables:
 FILE _uart0io;
-
 FILE _uart1io;
 
 int uart0_putchar(char c, FILE *)
@@ -23,7 +23,9 @@ int uart1_putchar(char c, FILE *)
 	Serial1.write(c);
 	return 0;
 }
-int uart1_getchar(FILE *) { return Serial1.read(); }
+int uart1_getchar(FILE *) {
+	return Serial1.read();
+}
 
 void uart0_init(void)
 {

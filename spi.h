@@ -11,6 +11,7 @@
 	 | (1 << SPE))
 #define SPI_SPSR(rat) ((rat & 4) ? (1 << SPI2X) : 0)
 
+// Bit numbers of data direction register:
 #define DD_SCK 1
 #define DD_MOSI 2
 #define DD_MISO 3

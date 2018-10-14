@@ -3,6 +3,7 @@
 #include "adc.h"
 #include <avr/io.h>
 
+// public variables:
 uint8_t adc_sta;
 uint8_t adc_cnt;
 uint16_t adc_val[ADC_CHAN_CNT];

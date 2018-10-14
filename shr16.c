@@ -3,6 +3,7 @@
 #include "shr16.h"
 #include <avr/io.h>
 
+// public variables:
 uint16_t shr16_v;
 
 void shr16_init(void)
@@ -38,19 +39,40 @@ void shr16_write(uint16_t v)
 	shr16_v = v;
 }
 
-void shr16_set_led(uint16_t led)
+/**
+ * @brief shr16_set_led
+ * Enable LEDs, active high
+ *
+ * @param led: bit mask with
+ *   bit0 = red led of first extruder (0)
+ *   bit0 = green led of first extruder (0)
+ *   alternating red-green until
+ *   bit9 = green LED of last extruder (4)
+ */
+void shr16_set_led(uint16_t led) // TODO 2: provide macros with easily readable names
 {
 	led = ((led & 0x00ff) << 8) | ((led & 0x0300) >> 2);
 	shr16_write((shr16_v & ~SHR16_LED_MSK) | led);
 }
 
+/**
+ * @brief shr16_set_ena
+ * Enable stepper driver of each channel
+ * @param ena: bit mask with bit0 = axis0, ..., bit2 = axis2
+ * 1 = enable, 0 = disable
+ */
 void shr16_set_ena(uint8_t ena)
 {
-	ena ^= 7;
+	ena ^= 7; // invert bits, since TMC2130 has active low inputs.
 	ena = ((ena & 1) << 1) | ((ena & 2) << 2) | ((ena & 4) << 3);
 	shr16_write((shr16_v & ~SHR16_ENA_MSK) | ena);
 }
 
+/**
+ * @brief shr16_set_dir
+ * Set direction signals of stepper drivers
+ * @param dir: bit mask with bit0 = axis0, ..., bit2 = axis2
+ */
 void shr16_set_dir(uint8_t dir)
 {
 	dir = (dir & 1) | ((dir & 2) << 1) | ((dir & 4) << 2);
