@@ -266,19 +266,31 @@ int8_t tmc2130_init_axis(uint8_t axis, bool homing)
 /**
  * @brief tmc2130_init_axis_current
  * @param axis
- * @param current_h
- * @param current_r
- * @return
+ * @param current_h: hold current, 0..63 (15..960mA RMS)
+ * @param current_r: run current, 0..63 (15..960mA RMS)
+ * @return zero on success
  */
 int8_t tmc2130_init_axis_current(uint8_t axis, uint8_t current_h, uint8_t current_r)
 {
-
-	if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), current_h, current_r))
+	if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), current_h, current_r)){
 		return -1;
+	}
 
-	tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
+	// immediate power down after motion stops (--> hold current)
+	tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0); // 0 seconds
+
+	// set tuned limit for stall detection (-64...+63 stall guard value units (90° equals 1023))
 	tmc2130_wr(axis, TMC2130_REG_COOLCONF, (((uint32_t)__sg_thr(axis)) << 16));
+
+	// set minimum speed, for which stall detection is then enabled
+	// Unit: 1/fCLK, derived from 1/256 microsteps
+	// fCLK is with internal clock about 13MHz
 	tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, __tcoolthrs(axis));
+
+	// all bits false, except:
+	// bit7/8: diag0/1_stall
+	// 12,13: diag0/1: push-pull output
+	// --> both diag outputs operate identical on a stall event
 	tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00003180);
 	return 0;
 }
