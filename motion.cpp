@@ -540,7 +540,8 @@ void home()
 
 	shr16_set_led(0x155);
 
-	move(IDLER_STEPS_AFTER_HOMING, SELECTOR_STEPS_AFTER_HOMING, 0); // move to initial position
+	move_idler(IDLER_STEPS_AFTER_HOMING);
+	move_selector(SELECTOR_STEPS_AFTER_HOMING); // move to initial position
 
 	active_extruder = 0;
 
