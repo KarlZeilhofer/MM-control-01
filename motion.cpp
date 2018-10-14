@@ -769,3 +769,95 @@ bool checkOk()
 
 	return _ret;
 }
+
+#ifdef TESTING
+void moveTest(uint8_t axis, int steps, int speed)
+{
+	shr16_set_led(0);
+	enum State
+	{
+		Accelerate=0,
+		ConstVelocity=1,
+		Decelerate=2,
+	};
+
+	float vMax = speed;
+	float acc = 20000;
+	float v0 = 200; // steps/s, minimum speed
+	float v = v0; // current speed
+	int accSteps = 0; // number of steps for acceleration
+	int stepsDone = 0;
+	int stepsLeft = 0;
+
+	switch(axis){
+	case AX_PUL:
+		stepsLeft = set_pulley_direction(steps);
+		break;
+	case AX_IDL:
+		stepsLeft = set_idler_direction(steps);
+		break;
+	case AX_SEL:
+		stepsLeft = set_selector_direction(steps);
+		break;
+	}
+
+	// State st = State::Accelerate;
+	int st = 0;
+	shr16_set_led(1<<0);
+
+	v = v0;
+	while(stepsLeft){
+		switch(axis){
+		case AX_PUL:
+			PIN_STP_PUL_HIGH;
+			PIN_STP_PUL_LOW;
+			break;
+		case AX_IDL:
+			PIN_STP_IDL_HIGH;
+			PIN_STP_IDL_LOW;
+			break;
+		case AX_SEL:
+			PIN_STP_SEL_HIGH;
+			PIN_STP_SEL_LOW;
+			break;
+		}
+		stepsDone++;
+		stepsLeft--;
+
+		float dt = 1/v;
+		delayMicroseconds(1e6*dt);
+
+		switch(st){
+		case 0://State::Accelerate :
+			v += acc*dt;
+			if(v >= vMax){
+				accSteps = stepsDone;
+				st = 1;//State::ConstVelocity;
+				shr16_set_led(1<<2);
+
+				v = vMax;
+			}else if(stepsDone > stepsLeft){
+				accSteps = stepsDone;
+				st = 2;//State::Decelerate;
+				shr16_set_led(1<<4);
+
+			}
+			break;
+		case 1:{//State::ConstVelocity :
+			volatile float dummy = acc*dt; // keep same timing in branches of switch
+			if(stepsLeft <= accSteps){
+				st = 2;//State::Decelerate;
+				shr16_set_led(1<<4);
+			}
+		}break;
+		case 2: {//State::Decelerate :
+			v -= acc*dt;
+			if(v<v0){
+				v=v0;
+			}
+		}break;
+		}
+	}
+}
+
+#endif

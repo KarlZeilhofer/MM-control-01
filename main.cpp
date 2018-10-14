@@ -32,6 +32,12 @@ extern "C" {
 void process_commands(FILE *inout);
 }
 
+#ifdef TESTING
+void testing_setup();
+void testing_loop();
+#endif
+
+
 //! @brief Initialization after reset
 //!
 //! button | action
@@ -104,7 +110,12 @@ void setup()
 		}
 	}
 
+#ifdef TESTING
+	testing_setup();
+#else
 	home();
+#endif
+
 	tmc2130_init(false); // trinamic
 
 	// check if to goto the settings menu
@@ -170,6 +181,7 @@ void manual_extruder_selector()
 	}
 }
 
+
 //! @brief main loop
 //!
 //! It is possible to manually select filament and feed it when not printing.
@@ -181,6 +193,9 @@ void manual_extruder_selector()
 //! @copydoc manual_extruder_selector()
 void loop()
 {
+#ifdef TESTING
+	testing_loop();
+#else
 	process_commands(uart_com);
 
 	if (!isPrinting) {
@@ -193,6 +208,7 @@ void loop()
 			}
 		}
 	}
+#endif
 }
 
 extern "C" {
@@ -288,9 +304,51 @@ void process_commands(FILE *inout)
 	}
 }
 
-}
+} // extern C
 
 void process_signals()
 {
 	// what to do here?
 }
+
+#ifdef TESTING
+void testing_setup()
+{
+
+}
+
+void testing_loop()
+{
+	int steps=0;
+	static int speed = 0;
+	static const int speed0 = 5000;
+
+	static bool leftPressed = false;
+	if(leftPressed == false && buttonClicked() == Btn::left){
+		leftPressed = true;
+		speed = speed0;
+	}else if(leftPressed == true && buttonClicked() == Btn::left){
+		speed++;
+	}else if(leftPressed == true && buttonClicked() != Btn::left){
+		leftPressed = false;
+		steps = -3000;
+	}
+
+	static bool rightPressed = false;
+	if(rightPressed == false && buttonClicked() == Btn::right){
+		rightPressed = true;
+		speed = speed0;
+	}else if(rightPressed == true && buttonClicked() == Btn::right){
+		speed++;
+	}else if(rightPressed == true && buttonClicked() != Btn::right){
+		rightPressed = false;
+		steps = 3000;
+	}
+
+	if(steps){
+		moveTest(AX_SEL, steps, speed);
+	}
+
+	delay(10); // delay for counting up the speed and switch debouncing
+}
+#endif

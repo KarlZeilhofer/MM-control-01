@@ -36,4 +36,8 @@ void move_proportional(int _idler, int _selector);
 void eject_filament(int extruder);
 void recover_after_eject();
 
+#ifdef TESTING
+void moveTest(uint8_t axis, int steps, int speed);
+#endif
+
 #endif
