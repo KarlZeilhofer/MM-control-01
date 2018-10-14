@@ -154,11 +154,11 @@ inline int8_t __sg_thr(uint8_t axis)
 {
 	switch (axis) {
 	case 0:
-		return TMC2130_SG_THR_0;
+		return TMC2130_SG_THR_PUL;
 	case 1:
-		return TMC2130_SG_THR_1;
+		return TMC2130_SG_THR_SEL;
 	case 2:
-		return TMC2130_SG_THR_2;
+		return TMC2130_SG_THR_IDL;
 	}
 	return TMC2130_SG_THR;
 }
@@ -168,25 +168,25 @@ inline int8_t __curh(uint8_t axis)
 {
 	switch (axis) {
 	case 0:
-		return 1;
+		return I_HOLD_PUL;
 	case 1:
-		return 20;
+		return I_HOLD_SEL;
 	case 2:
-		return 24;
+		return I_HOLD_IDL;
 	}
 	return 16;
 }
 
-//! running current
+//! running currents for homing
 inline int8_t __curr(uint8_t axis)
 {
 	switch (axis) {
 	case 0:
-		return 30;
+		return I_RUN_HOMING_PUL;
 	case 1:
-		return 35;
+		return I_RUN_HOMING_SEL;
 	case 2:
-		return 35;
+		return I_RUN_HOMING_IDL;
 	}
 	return 16;
 }
@@ -196,11 +196,11 @@ inline int8_t __currh(uint8_t axis)
 {
 	switch (axis) {
 	case 0:
-		return 1;
+		return I_RUN_PUL;
 	case 1:
-		return 20;
+		return I_RUN_SEL;
 	case 2:
-		return 30;
+		return I_RUN_IDL;
 	}
 	return 16;
 }

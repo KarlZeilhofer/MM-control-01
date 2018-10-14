@@ -64,15 +64,32 @@
 // the motor stalls. It's a 10 bit value, with	1023 in idle load (theoretically)
 // According to the whole setup, that treshold should be tuned for accurate
 // stall detection.
-#define TMC2130_SG_THR_0 5
-#define TMC2130_SG_THR_1 6
-#define TMC2130_SG_THR_2 1
+#define TMC2130_SG_THR_PUL 5
+#define TMC2130_SG_THR_SEL 6
+#define TMC2130_SG_THR_IDL 1
 
 // TCOOLTHRS coolstep treshold, usable range 400-600, unit is 1/13MHz ~= 75ns
 // below that equivalent speed the stall detection is disabled
 #define TMC2130_TCOOLTHRS_0 450 // 450 = 33.8us which is equal to a speed of 115 full steps/s
 #define TMC2130_TCOOLTHRS_1 450
 #define TMC2130_TCOOLTHRS_2 450
+
+// hold currents
+#define I_HOLD_PUL 1
+#define I_HOLD_SEL 20
+#define I_HOLD_IDL 24
+
+// run currents for homing
+#define I_RUN_HOMING_PUL 30
+#define I_RUN_HOMING_SEL 35
+#define I_RUN_HOMING_IDL 35
+
+// run currents when already homed:
+#define I_RUN_PUL 1
+#define I_RUN_SEL 20
+#define I_RUN_IDL 30
+
+
 
 #define AX_PUL 0 // Pulley (Filament Drive)
 #define AX_SEL 1 // Selector
