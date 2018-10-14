@@ -27,7 +27,7 @@ bool feed_filament()
 
 	int _c = 0;
 	int _delay = 0;
-	park_idler(true);
+	engage_filament_pully(true);
 
 	set_pulley_dir_push();
 	tmc2130_init_axis_current(AX_PUL, 1, 15);
@@ -67,7 +67,7 @@ bool feed_filament()
 	}
 
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
-	park_idler(false);
+	engage_filament_pully(false);
 	shr16_set_led(1 << 2 * (4 - active_extruder));
 	return true;
 }
@@ -149,9 +149,9 @@ bool select_extruder(int new_extruder)
 				move(0, -700, 0);
 			} else {
 				if (isIdlerParked)
-					park_idler(true);
+					engage_filament_pully(true);
 				set_positions(previous_extruder, active_extruder); // move idler and selector to new filament position
-				park_idler(false);
+				engage_filament_pully(false);
 			}
 		}
 		_return = true;

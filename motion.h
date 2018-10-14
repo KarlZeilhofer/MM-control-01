@@ -12,7 +12,7 @@ extern bool home_selector();
 
 extern int8_t filament_type[EXTRUDERS];
 
-void park_idler(bool _unpark);
+void engage_filament_pully(bool _unpark);
 
 void load_filament_withSensor();
 void load_filament_inPrinter();

@@ -31,7 +31,7 @@ int set_pulley_direction(int _steps);
 
 void cut_filament();
 
-void park_idler(bool _unpark);
+void engage_filament_pully(bool engage);
 
 void load_filament_inPrinter();
 void load_filament_withSensor();
@@ -74,7 +74,7 @@ void eject_filament(int extruder)
 		unload_filament_withSensor();
 
 	if (isIdlerParked)
-		park_idler(true); // if idler is in parked position un-park him get in contact with filament
+		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	// if we are want to eject fil 0-2, move seelctor to position 4 (right), if we want to eject filament 3 - 4, move
@@ -104,7 +104,7 @@ void eject_filament(int extruder)
 	} while (steps < 2500);
 
 	// unpark idler so user can easily remove filament
-	park_idler(false);
+	engage_filament_pully(false);
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
 }
 
@@ -122,7 +122,7 @@ void recover_after_eject()
 void load_filament_withSensor()
 {
 	if (isIdlerParked)
-		park_idler(true); // if idler is in parked position un-park him get in contact with filament
+		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	set_pulley_dir_push();
@@ -167,7 +167,7 @@ void load_filament_withSensor()
 		bool _continue = false;
 		bool _isOk = false;
 
-		park_idler(false);
+		engage_filament_pully(false);
 		do {
 			shr16_set_led(0x000);
 			delay(800);
@@ -184,26 +184,26 @@ void load_filament_withSensor()
 			switch (buttonClicked()) {
 			case Btn::left:
 				// just move filament little bit
-				park_idler(true);
+				engage_filament_pully(true);
 				set_pulley_dir_push();
 
 				for (int i = 0; i < 200; i++) {
 					do_pulley_step();
 					delayMicroseconds(5500);
 				}
-				park_idler(false);
+				engage_filament_pully(false);
 				break;
 			case Btn::middle:
 				// check if everything is ok
-				park_idler(true);
+				engage_filament_pully(true);
 				_isOk = checkOk();
-				park_idler(false);
+				engage_filament_pully(false);
 				break;
 			case Btn::right:
 				// continue with loading
-				park_idler(true);
+				engage_filament_pully(true);
 				_isOk = checkOk();
-				park_idler(false);
+				engage_filament_pully(false);
 
 				if (_isOk) // pridat do podminky flag ze od tiskarny prislo continue
 				{
@@ -216,7 +216,7 @@ void load_filament_withSensor()
 
 		} while (!_continue);
 
-		park_idler(true);
+		engage_filament_pully(true);
 		// TODO: do not repeat same code, try to do it until succesfull load
 		_loadSteps = 0;
 		do {
@@ -259,7 +259,7 @@ void unload_filament_withSensor()
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
 
 	if (isIdlerParked)
-		park_idler(true); // if idler is in parked position un-park him get in contact with filament
+		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 
 	set_pulley_dir_pull();
 
@@ -323,7 +323,7 @@ void unload_filament_withSensor()
 		bool _continue = false;
 		bool _isOk = false;
 
-		park_idler(false);
+		engage_filament_pully(false);
 		do {
 			shr16_set_led(0x000);
 			delay(100);
@@ -340,26 +340,26 @@ void unload_filament_withSensor()
 			switch (buttonClicked()) {
 			case Btn::left:
 				// just move filament little bit
-				park_idler(true);
+				engage_filament_pully(true);
 				set_pulley_dir_pull();
 
 				for (int i = 0; i < 200; i++) {
 					do_pulley_step();
 					delayMicroseconds(5500);
 				}
-				park_idler(false);
+				engage_filament_pully(false);
 				break;
 			case Btn::middle:
 				// check if everything is ok
-				park_idler(true);
+				engage_filament_pully(true);
 				_isOk = checkOk();
-				park_idler(false);
+				engage_filament_pully(false);
 				break;
 			case Btn::right:
 				// continue with unloading
-				park_idler(true);
+				engage_filament_pully(true);
 				_isOk = checkOk();
-				park_idler(false);
+				engage_filament_pully(false);
 
 				if (_isOk) {
 					_continue = true;
@@ -372,7 +372,7 @@ void unload_filament_withSensor()
 		} while (!_continue);
 
 		shr16_set_led(1 << 2 * (4 - previous_extruder));
-		park_idler(true);
+		engage_filament_pully(true);
 	} else {
 		// correct unloading
 		_speed = 5000;
@@ -384,7 +384,7 @@ void unload_filament_withSensor()
 			delayMicroseconds(_speed);
 		}
 	}
-	park_idler(false);
+	engage_filament_pully(false);
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
 	isFilamentLoaded = false; // filament unloaded
 }
@@ -394,7 +394,7 @@ void load_filament_inPrinter()
 	// loads filament after confirmed by printer into the Bontech pulley gears so they can grab them
 
 	if (isIdlerParked)
-		park_idler(true); // if idler is in parked position un-park him get in contact with filament
+		engage_filament_pully(true); // if idler is in parked position un-park him get in contact with filament
 	set_pulley_dir_push();
 
 	// PLA
@@ -414,7 +414,7 @@ void load_filament_inPrinter()
 		delayMicroseconds(2200);
 	}
 
-	park_idler(false);
+	engage_filament_pully(false);
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
 }
 
@@ -453,10 +453,16 @@ void do_idler_step()
 	asm("nop");
 }
 
-void park_idler(bool _unpark)
+/**
+ * @brief engage_filament_pully
+ * Turns the idler drum to engage or disengage the filament pully
+ * @param engage
+ * If true, pully can drive the filament afterwards
+ * if false, idler is parked, so the filament can move freely
+ */
+void engage_filament_pully(bool engage)
 {
-
-	if (_unpark) // get idler in contact with filament
+	if (engage) // get idler in contact with filament
 	{
 		move(idler_parking_steps, 0, 0);
 		isIdlerParked = false;
@@ -544,7 +550,7 @@ void home()
 
 	active_extruder = 0;
 
-	park_idler(false);
+	engage_filament_pully(false);
 	shr16_set_led(0x000);
 
 	isFilamentLoaded = false;
