@@ -88,7 +88,7 @@ bool switch_extruder_withSensor(int new_extruder)
 	}
 
 	if (active_extruder == 5) {
-		move(0, -700, 0);
+		move_selector(-700);
 		active_extruder = 4;
 	}
 
@@ -149,10 +149,10 @@ bool select_extruder(int new_extruder)
 		}
 	} else {
 		if (new_extruder == 5) {
-			move(0, 700, 0);
+			move_selector(700);
 		} else {
 			if (previous_extruder == 5) {
-				move(0, -700, 0);
+				move_selector(-700);
 			} else {
 				engage_filament_pully(true);
 				set_positions(previous_extruder, active_extruder); // move idler and selector to new filament position
@@ -169,7 +169,7 @@ bool select_extruder(int new_extruder)
 
 bool service_position()
 {
-	move(0, 600, 0);
+	move_selector(600); // TODO 1: check if 600 is ok!
 
 	return true;
 }

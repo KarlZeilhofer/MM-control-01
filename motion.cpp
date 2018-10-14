@@ -466,11 +466,11 @@ void engage_filament_pully(bool engage)
 {
 	if (isIdlerParked && engage) // get idler in contact with filament
 	{
-		move(IDLER_PARKING_STEPS, 0, 0);
+		move_idler(IDLER_PARKING_STEPS);
 		isIdlerParked = false;
 	} else if(!isIdlerParked && !engage) // park idler so filament can move freely
 	{
-		move(IDLER_PARKING_STEPS * -1, 0, 0);
+		move_idler(IDLER_PARKING_STEPS * -1);
 		isIdlerParked = true;
 	}
 }
@@ -480,12 +480,14 @@ bool home_idler()
 	int _c = 0;
 	int _l = 0;
 
+	move_idler(-10); // move a bit in opposite direction
+
 	for (int c = 1; c > 0; c--) // not really functional, let's do it rather more times to be sure
 	{
-		move(0, (c * 5) * -1, 0);
+		move_selector((c * 5) * -1); // TODO 1: seems to be a bug, why move selecotr in home idler?, see issue #53
 		delay(50);
 		for (int i = 0; i < 2000; i++) {
-			move(1, 0, 0);
+			move_idler(1);
 			delayMicroseconds(100);
 			tmc2130_read_sg(AX_IDL);
 
@@ -507,16 +509,17 @@ bool home_idler()
 
 bool home_selector()
 {
-
 	int _c = 0;
 	int _l = 2;
 
+	move_selector(-100); // move a bit in opposite direction
+
 	for (int c = 5; c > 0; c--) // not really functional, let's do it rather more times to be sure
 	{
-		move(0, (c * 20) * -1, 0);
+		move_selector((c * 20) * -1);
 		delay(50);
 		for (int i = 0; i < 4000; i++) {
-			move(0, 1, 0);
+			move_selector(1);
 			uint16_t sg = tmc2130_read_sg(AX_SEL);
 			if ((i > 16) && (sg < 10))
 				break;
@@ -540,7 +543,6 @@ bool home_selector()
 
 void home()
 {
-	move(-10, -100, 0); // move a bit in opposite direction
 
 	// home both idler and selector
 	home_idler();
@@ -613,6 +615,21 @@ void move_proportional(int _idler, int _selector)
 		}
 
 	} while (_selector != 0 || _idler != 0);
+}
+
+void move_idler(int steps)
+{
+	move(steps, 0, 0);
+}
+
+void move_selector(int steps)
+{
+	move(0, steps, 0);
+}
+
+void move_pulley(int steps)
+{
+	move(0, 0, steps);
 }
 
 void move(int _idler, int _selector, int _pulley)
