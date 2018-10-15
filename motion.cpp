@@ -771,7 +771,20 @@ bool checkOk()
 }
 
 #ifdef TESTING
-void moveTest(uint8_t axis, int steps, int speed)
+
+bool proper_home_selector()
+{
+	for (int c = 5; c > 0; c--) // not really functional, let's do it rather more times to be sure
+	{
+		moveTest(AX_SEL, (c * 20) * -1, 1000, false);
+		delay(50);
+		moveTest(AX_SEL, 4000, 1000, false);
+	}
+
+	return true;
+}
+
+void moveTest(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 {
 	shr16_set_led(0);
 	enum State
@@ -782,7 +795,7 @@ void moveTest(uint8_t axis, int steps, int speed)
 	};
 
 	float vMax = speed;
-	float acc = 20000;
+	float acc = 100000;
 	float v0 = 200; // steps/s, minimum speed
 	float v = v0; // current speed
 	int accSteps = 0; // number of steps for acceleration
@@ -821,6 +834,16 @@ void moveTest(uint8_t axis, int steps, int speed)
 			PIN_STP_SEL_LOW;
 			break;
 		}
+
+		// TODO 1: check all stall detection pins during motion
+		if(digitalRead(A4) == 1){
+			delay(50);
+			if(rehomeOnFail){
+				proper_home_selector();
+			}
+			break;
+		}
+
 		stepsDone++;
 		stepsLeft--;
 

@@ -37,7 +37,7 @@ void eject_filament(int extruder);
 void recover_after_eject();
 
 #ifdef TESTING
-void moveTest(uint8_t axis, int steps, int speed);
+void moveTest(uint8_t axis, int steps, int speed, bool rehomeOnFail = true);
 #endif
 
 #endif

@@ -321,7 +321,7 @@ void testing_loop()
 {
 	int steps=0;
 	static int speed = 0;
-	static const int speed0 = 5000;
+	static const int speed0 = 10000;
 
 	static bool leftPressed = false;
 	if(leftPressed == false && buttonClicked() == Btn::left){
