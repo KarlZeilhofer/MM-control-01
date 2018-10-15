@@ -314,6 +314,7 @@ void process_signals()
 #ifdef TESTING
 void testing_setup()
 {
+	proper_home_selector();
 
 }
 
@@ -322,6 +323,7 @@ void testing_loop()
 	int steps=0;
 	static int speed = 0;
 	static const int speed0 = 10000;
+	static const int DeltaPos = 700;
 
 	static bool leftPressed = false;
 	if(leftPressed == false && buttonClicked() == Btn::left){
@@ -331,7 +333,7 @@ void testing_loop()
 		speed++;
 	}else if(leftPressed == true && buttonClicked() != Btn::left){
 		leftPressed = false;
-		steps = -3000;
+		steps = -DeltaPos;
 	}
 
 	static bool rightPressed = false;
@@ -342,7 +344,7 @@ void testing_loop()
 		speed++;
 	}else if(rightPressed == true && buttonClicked() != Btn::right){
 		rightPressed = false;
-		steps = 3000;
+		steps = DeltaPos;
 	}
 
 	if(steps){

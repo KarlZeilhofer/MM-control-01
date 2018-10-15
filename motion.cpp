@@ -774,12 +774,14 @@ bool checkOk()
 
 bool proper_home_selector()
 {
-	for (int c = 5; c > 0; c--) // not really functional, let's do it rather more times to be sure
+	for (int c = 3; c > 0; c--) // touch end 3 times
 	{
-		moveTest(AX_SEL, (c * 20) * -1, 1000, false);
+		moveTest(AX_SEL, (c * 33) * -1, 1000, false);
 		delay(50);
 		moveTest(AX_SEL, 4000, 1000, false);
 	}
+
+	moveTest(AX_SEL, -3700, 8000);
 
 	return true;
 }
