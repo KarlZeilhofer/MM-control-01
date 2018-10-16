@@ -47,7 +47,7 @@ bool feed_filament()
 			_delay++;
 		};
 
-		if (digitalRead(A1) == 1) {
+		if (isFilamentInFinda()) {
 			_loaded = true;
 			_feed = false;
 		};

@@ -16,6 +16,7 @@ bool home_idler();
 bool home_selector();
 void engage_filament_pully(bool engage);
 
+bool isFilamentInFinda();
 void load_filament_withSensor();
 void load_filament_intoExtruder();
 

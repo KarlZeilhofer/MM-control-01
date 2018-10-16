@@ -97,9 +97,9 @@ void setup()
 	init_Pulley();
 
 	// if FINDA is sensing filament do not home
-	while (digitalRead(A1) == 1) {
+	while (isFilamentInFinda()) {
 		while (Btn::right != buttonClicked()) {
-			if (digitalRead(A1) == 1) {
+			if (isFilamentInFinda()) {
 				shr16_set_led(0x2aa);
 			} else {
 				shr16_set_led(0x155);
