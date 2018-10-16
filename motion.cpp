@@ -35,12 +35,10 @@ static int selector_steps_for_eject = 0;
 static int idler_steps_for_eject = 0;
 
 // private functions:
-static int set_idler_direction(int _steps);
-static int set_selector_direction(int _steps);
-static int set_pulley_direction(int _steps);
+static int set_idler_direction(int steps);
+static int set_selector_direction(int steps);
+static int set_pulley_direction(int steps);
 static void do_idler_step();
-static void set_idler_dir_down();
-static void set_idler_dir_up();
 
 bool checkOk();
 
@@ -621,15 +619,24 @@ void move_idler(int steps)
 	moveSmooth(AX_IDL, steps, 10000, true);
 }
 
+/**
+ * @brief move_selector
+ * Strictly prevent selector movement, when filament is in FINDA
+ * @param steps, number of micro steps
+ */
 void move_selector(int steps)
 {
-	moveSmooth(AX_SEL, steps, 5000, true);
+	if(isFilamentInFinda() == false){
+		moveSmooth(AX_SEL, steps, 5000, true);
+	}
 }
 
 void move_pulley(int steps)
 {
 	moveSmooth(AX_PUL, steps, 2000, true);
 }
+
+
 #else
 void move_idler(int steps)
 {
@@ -692,46 +699,55 @@ void move(int _idler, int _selector, int _pulley)
 	} while (_selector != 0 || _idler != 0 || _pulley != 0);
 }
 
-void set_idler_dir_down()
+/**
+ * @brief set_idler_direction
+ * @param steps: positive = towards engaging filament nr 1,
+ * negative = towards engaging filament nr 5.
+ * @return abs(steps)
+ */
+int set_idler_direction(int steps)
 {
-	shr16_set_dir(shr16_get_dir() & ~4);
-	// shr16_set_dir(shr16_get_dir() | 4);
-}
-void set_idler_dir_up()
-{
-	shr16_set_dir(shr16_get_dir() | 4);
-	// shr16_set_dir(shr16_get_dir() & ~4);
+	if (steps < 0) {
+		steps = steps * -1;
+		shr16_set_dir(shr16_get_dir() & ~4);
+	} else {
+		shr16_set_dir(shr16_get_dir() | 4);
+	}
+	return steps;
 }
 
-int set_idler_direction(int _steps)
+/**
+ * @brief set_selector_direction
+ * Sets the direction bit on the motor driver and returns positive number of steps
+ * @param steps: positive = to the right (towards filament 5),
+ * negative = to the left (towards filament 1)
+ * @return abs(steps)
+ */
+int set_selector_direction(int steps)
 {
-	if (_steps < 0) {
-		_steps = _steps * -1;
-		set_idler_dir_down();
-	} else {
-		set_idler_dir_up();
-	}
-	return _steps;
-}
-int set_selector_direction(int _steps)
-{
-	if (_steps < 0) {
-		_steps = _steps * -1;
+	if (steps < 0) {
+		steps = steps * -1;
 		shr16_set_dir(shr16_get_dir() & ~2);
 	} else {
 		shr16_set_dir(shr16_get_dir() | 2);
 	}
-	return _steps;
+	return steps;
 }
-int set_pulley_direction(int _steps)
+
+/**
+ * @brief set_pulley_direction
+ * @param steps, positive (push) or negative (pull)
+ * @return abs(steps)
+ */
+int set_pulley_direction(int steps)
 {
-	if (_steps < 0) {
-		_steps = _steps * -1;
+	if (steps < 0) {
+		steps = steps * -1;
 		set_pulley_dir_pull();
 	} else {
 		set_pulley_dir_push();
 	}
-	return _steps;
+	return steps;
 }
 
 void set_pulley_dir_push() { shr16_set_dir(shr16_get_dir() & ~1); }
