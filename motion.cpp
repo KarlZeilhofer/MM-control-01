@@ -30,6 +30,8 @@ static const int IDLER_PARKING_STEPS = (IDLER_STEPS / 2) + 40; // 40
 static const int BOWDEN_LENGTH = 1000;
 // endstop to tube  - 30 mm, 550 steps
 
+static const int EJECT_PULLEY_STEPS = 2500;
+
 // private variables:
 static int selector_steps_for_eject = 0;
 static int idler_steps_for_eject = 0;
@@ -62,7 +64,6 @@ void set_positions(int _current_extruder, int _next_extruder)
 void eject_filament(int extruder)
 {
 	int selector_position = 0;
-	int steps = 0;
 
 	int8_t selector_offset_for_eject = 0;
 	int8_t idler_offset_for_eject = 0;
@@ -96,11 +97,7 @@ void eject_filament(int extruder)
 	move_selector(selector_steps_for_eject);
 
 	// push filament forward
-	do {
-		do_pulley_step();
-		steps++;
-		delayMicroseconds(1500);
-	} while (steps < 2500);
+	move_pulley(EJECT_PULLEY_STEPS);
 
 	// unpark idler so user can easily remove filament
 	engage_filament_pully(false);
@@ -111,6 +108,11 @@ void recover_after_eject()
 {
 	// restore state before eject filament
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
+
+	// pull back filament
+	engage_filament_pully(true);
+	move_pulley(-EJECT_PULLEY_STEPS);
+	engage_filament_pully(false);
 
 	move_idler(-idler_steps_for_eject); // TODO 1: remove this, when abs coordinates are implemented!
 	move_selector(-selector_steps_for_eject);
