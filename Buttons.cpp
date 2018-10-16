@@ -164,14 +164,14 @@ void settings_bowden_length()
 			case Btn::right:
 				if (bowdenLength.decrease()) {
 					move_pulley(-bowdenLength.StepSize);
-					delay(400);
+					delay(100);
 				}
 				break;
 
 			case Btn::left:
 				if (bowdenLength.increase()) {
 					move_pulley(bowdenLength.StepSize);
-					delay(400);
+					delay(100);
 				}
 				break;
 			default:
