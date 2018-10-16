@@ -534,6 +534,11 @@ bool home_selector()
 void home()
 {
 
+#ifdef TESTING
+	homeIdlerSmooth();
+	homeSelectorSmooth();
+	shr16_set_led(0x155);
+#else
 	// home both idler and selector
 	home_idler();
 	home_selector();
@@ -542,6 +547,7 @@ void home()
 
 	move_idler(IDLER_STEPS_AFTER_HOMING);
 	move_selector(SELECTOR_STEPS_AFTER_HOMING); // move to initial position
+#endif
 
 	active_extruder = 0;
 
@@ -608,6 +614,22 @@ void move_proportional(int _idler, int _selector)
 	} while (_selector != 0 || _idler != 0);
 }
 
+#ifdef TESTING
+void move_idler(int steps)
+{
+	moveSmooth(AX_IDL, steps, 1000, true);
+}
+
+void move_selector(int steps)
+{
+	moveSmooth(AX_SEL, steps, 5000, true);
+}
+
+void move_pulley(int steps)
+{
+	moveSmooth(AX_PUL, steps, 2000, true);
+}
+#else
 void move_idler(int steps)
 {
 	move(steps, 0, 0);
@@ -622,6 +644,7 @@ void move_pulley(int steps)
 {
 	move(0, 0, steps);
 }
+#endif
 
 void move(int _idler, int _selector, int _pulley)
 {
@@ -772,22 +795,43 @@ bool checkOk()
 
 #ifdef TESTING
 
-bool proper_home_selector()
+MotReturn homeSelectorSmooth()
 {
 	for (int c = 3; c > 0; c--) // touch end 3 times
 	{
-		moveTest(AX_SEL, (c * 33) * -1, 1000, false);
+		moveSmooth(AX_SEL, -c*33, 1000, false);
 		delay(50);
-		moveTest(AX_SEL, 4000, 1000, false);
+		moveSmooth(AX_SEL, 4000, c*300, false);
 	}
 
-	moveTest(AX_SEL, -3700, 8000);
-
-	return true;
+	return moveSmooth(AX_SEL, SELECTOR_STEPS_AFTER_HOMING, 8000, false);
 }
 
-void moveTest(uint8_t axis, int steps, int speed, bool rehomeOnFail)
+MotReturn homeIdlerSmooth()
 {
+	for (int c = 3; c > 0; c--) // touch end 3 times
+	{
+		moveSmooth(AX_IDL, -c*33, 1000, false);
+		delay(50);
+		moveSmooth(AX_IDL, 4000, 300*c, false);
+	}
+
+	return moveSmooth(AX_SEL, IDLER_STEPS_AFTER_HOMING, 2000, false);
+}
+
+/**
+ * @brief moveTest
+ * @param axis, index of axis, use AX_PUL, AX_SEL or AX_IDL
+ * @param steps, number of micro steps to move
+ * @param speed, max. speed
+ * @param rehomeOnFail: flag, by default true, set to false
+ *   in homing commands, to prevent endless loops and stack overflow.
+ * @return
+ */
+MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
+{
+	MotReturn ret = MR_Success;
+
 	shr16_set_led(0);
 	enum State
 	{
@@ -797,7 +841,7 @@ void moveTest(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 	};
 
 	float vMax = speed;
-	float acc = 100000;
+	float acc = 50000; // Note: tested selector successfully with 100k
 	float v0 = 200; // steps/s, minimum speed
 	float v = v0; // current speed
 	int accSteps = 0; // number of steps for acceleration
@@ -821,27 +865,44 @@ void moveTest(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 	shr16_set_led(1<<0);
 
 	v = v0;
+
 	while(stepsLeft){
 		switch(axis){
 		case AX_PUL:
 			PIN_STP_PUL_HIGH;
 			PIN_STP_PUL_LOW;
+			if(digitalRead(A3) == 1){ // stall detected
+				return MR_Failed;
+			}
 			break;
 		case AX_IDL:
 			PIN_STP_IDL_HIGH;
 			PIN_STP_IDL_LOW;
+			if(digitalRead(A5) == 1){ // stall detected
+				if(rehomeOnFail){
+					if(homeIdlerSmooth() == MR_Success){
+						return MR_FailedAndRehomed;
+					}else{
+						return MR_Failed;
+					}
+				}else{
+					return MR_Failed;
+				}
+			}
 			break;
 		case AX_SEL:
 			PIN_STP_SEL_HIGH;
 			PIN_STP_SEL_LOW;
-			break;
-		}
-
-		// TODO 1: check all stall detection pins during motion
-		if(digitalRead(A4) == 1){
-			delay(50);
-			if(rehomeOnFail){
-				proper_home_selector();
+			if(digitalRead(A4) == 1){ // stall detected
+				if(rehomeOnFail){
+					if(homeSelectorSmooth() == MR_Success){
+						return MR_FailedAndRehomed;
+					}else{
+						return MR_Failed;
+					}
+				}else{
+					return MR_Failed;
+				}
 			}
 			break;
 		}
@@ -883,6 +944,8 @@ void moveTest(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 		}break;
 		}
 	}
+
+	return ret;
 }
 
 #endif
