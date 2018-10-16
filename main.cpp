@@ -162,8 +162,6 @@ void manual_extruder_selector()
 	shr16_set_led(1 << 2 * (4 - active_extruder));
 
 	if ((Btn::left | Btn::right) & buttonClicked()) {
-		delay(500);
-
 		switch (buttonClicked()) {
 		case Btn::right:
 			if (active_extruder < 5) {
@@ -178,7 +176,6 @@ void manual_extruder_selector()
 		default:
 			break;
 		}
-		delay(500);
 	}
 
 	if (active_extruder == 5) {
