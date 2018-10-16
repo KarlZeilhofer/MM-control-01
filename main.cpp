@@ -192,9 +192,9 @@ void manual_extruder_selector()
 //! @copydoc manual_extruder_selector()
 void loop()
 {
-//#ifdef TESTING
-//	testing_loop();
-//#else
+#ifdef TESTING
+	testing_loop();
+#else
 	process_commands(uart_com);
 
 	if (!isPrinting) {
@@ -206,7 +206,7 @@ void loop()
 			}
 		}
 	}
-//#endif
+#endif
 }
 
 extern "C" {
@@ -319,8 +319,8 @@ void testing_loop()
 {
 	int steps=0;
 	static int speed = 0;
-	static const int speed0 = 10000;
-	static const int DeltaPos = 700;
+	static const int speed0 = 5000;
+	static const int DeltaPos = 300;
 
 	static bool leftPressed = false;
 	if(leftPressed == false && buttonClicked() == Btn::left){
@@ -345,7 +345,9 @@ void testing_loop()
 	}
 
 	if(steps){
-		moveSmooth(AX_SEL, steps, speed);
+		// TODO 0: entweder stall guard tunen, dass es passt, oder
+		// stall detection deaktivieren für diese achse!
+		moveSmooth(AX_IDL, steps, speed);
 	}
 
 	delay(10); // delay for counting up the speed and switch debouncing
