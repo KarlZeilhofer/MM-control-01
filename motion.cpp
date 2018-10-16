@@ -30,11 +30,9 @@ static const int IDLER_PARKING_STEPS = (IDLER_STEPS / 2) + 40; // 40
 static const int BOWDEN_LENGTH = 1000;
 // endstop to tube  - 30 mm, 550 steps
 
-
 // private variables:
 static int selector_steps_for_eject = 0;
 static int idler_steps_for_eject = 0;
-
 
 // private functions:
 static int set_idler_direction(int _steps);
@@ -53,7 +51,8 @@ void set_positions(int _current_extruder, int _next_extruder)
 	int _idler_steps = (_current_extruder - _next_extruder) * IDLER_STEPS;
 
 	// move both to new position
-	move_proportional(_idler_steps, _selector_steps);
+	move_idler(_idler_steps); // remove this, with when abs coordinates are implemented!
+	move_selector(_selector_steps);
 }
 
 /**
@@ -95,7 +94,8 @@ void eject_filament(int extruder)
 	idler_steps_for_eject = idler_offset_for_eject * IDLER_STEPS;
 
 	// move selector and idler to new position
-	move_proportional(idler_steps_for_eject, selector_steps_for_eject);
+	move_idler(idler_steps_for_eject); // remove this, with when abs coordinates are implemented!
+	move_selector(selector_steps_for_eject);
 
 	// push filament forward
 	do {
@@ -112,12 +112,12 @@ void eject_filament(int extruder)
 void recover_after_eject()
 {
 	// restore state before eject filament
-	// if (isIdlerParked) park_idler(true); // if idler is in parked position un-park him get in contact with filament
 	tmc2130_init_axis_current(AX_PUL, 1, 30);
-	move_proportional(-idler_steps_for_eject, -selector_steps_for_eject);
+
+	move_idler(-idler_steps_for_eject); // TODO 1: remove this, when abs coordinates are implemented!
+	move_selector(-selector_steps_for_eject);
+
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
-	// unpark idler
-	// park_idler(false);
 }
 
 void load_filament_withSensor()
@@ -621,7 +621,7 @@ void move_proportional(int _idler, int _selector)
 #ifdef TESTING
 void move_idler(int steps)
 {
-	moveSmooth(AX_IDL, steps, 1000, true);
+	moveSmooth(AX_IDL, steps, 10000, true);
 }
 
 void move_selector(int steps)

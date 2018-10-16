@@ -144,15 +144,18 @@ bool select_extruder(int new_extruder)
 			_return = true;
 		}
 	} else {
-		if (new_extruder == 5) {
-			move_selector(700);
+		if (new_extruder == EXTRUDERS) {
+			move_selector(700); // move to service position
 		} else {
-			if (previous_extruder == 5) {
-				move_selector(-700);
+			if (previous_extruder == EXTRUDERS) {
+				move_selector(-700); // move back from service position
 			} else {
-				engage_filament_pully(true);
+				//engage_filament_pully(true); // TODO 3: remove deprecated
+					// why should we engage the filament here?
+					// the idler is moved "synchronously" with the selector anyway!
+
 				set_positions(previous_extruder, active_extruder); // move idler and selector to new filament position
-				engage_filament_pully(false);
+				//engage_filament_pully(false); // TODO 3: remove deprecated
 			}
 		}
 		_return = true;
@@ -165,6 +168,7 @@ bool select_extruder(int new_extruder)
 
 bool service_position()
 {
+	// TODO 2: fixme, when abs-coords are implemented
 	move_selector(600); // TODO 1: check if 600 is ok!
 
 	return true;

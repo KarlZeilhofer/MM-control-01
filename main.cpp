@@ -164,7 +164,7 @@ void manual_extruder_selector()
 	if ((Btn::left | Btn::right) & buttonClicked()) {
 		switch (buttonClicked()) {
 		case Btn::right:
-			if (active_extruder < 5) {
+			if (active_extruder < EXTRUDERS) {
 				select_extruder(active_extruder + 1);
 			}
 			break;
