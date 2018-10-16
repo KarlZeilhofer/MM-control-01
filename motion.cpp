@@ -404,13 +404,13 @@ void load_filament_intoExtruder()
 
 	// PLA
 	tmc2130_init_axis_current(AX_PUL, 1, 15);
-	move_pulley(150); // TODO 1: 384 steps/s
+	move_pulley(150, 384);
 
 	tmc2130_init_axis_current(AX_PUL, 1, 10);
-	move_pulley(170); // TODO 1: 384 steps/s
+	move_pulley(170, 384);
 
 	tmc2130_init_axis_current(AX_PUL, 1, 3);
-	move_pulley(450); // TODO 1: 454 steps/s
+	move_pulley(450, 454);
 
 	engage_filament_pully(false);
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
@@ -616,9 +616,9 @@ void move_proportional(int _idler, int _selector)
 }
 
 #ifdef TESTING
-void move_idler(int steps)
+void move_idler(int steps, uint16_t speed)
 {
-	moveSmooth(AX_IDL, steps, 10000, true);
+	moveSmooth(AX_IDL, steps, speed, true, false);
 }
 
 /**
@@ -626,16 +626,16 @@ void move_idler(int steps)
  * Strictly prevent selector movement, when filament is in FINDA
  * @param steps, number of micro steps
  */
-void move_selector(int steps)
+void move_selector(int steps, uint16_t speed)
 {
 	if(isFilamentInFinda() == false){
-		moveSmooth(AX_SEL, steps, 5000, true);
+		moveSmooth(AX_SEL, steps, speed);
 	}
 }
 
-void move_pulley(int steps)
+void move_pulley(int steps, uint16_t speed)
 {
-	moveSmooth(AX_PUL, steps, 2000, true);
+	moveSmooth(AX_PUL, steps, speed);
 }
 
 
@@ -837,7 +837,7 @@ MotReturn homeIdlerSmooth()
 		}
 	}
 
-	return moveSmooth(AX_IDL, IDLER_STEPS_AFTER_HOMING, 5000, false);
+	return moveSmooth(AX_IDL, IDLER_STEPS_AFTER_HOMING, 5000, false, false);
 }
 
 /**
@@ -849,7 +849,8 @@ MotReturn homeIdlerSmooth()
  *   in homing commands, to prevent endless loops and stack overflow.
  * @return
  */
-MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
+MotReturn moveSmooth(uint8_t axis, int steps, int speed,
+					 bool rehomeOnFail, bool withStallDetection)
 {
 	MotReturn ret = MR_Success;
 
@@ -892,7 +893,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 		case AX_PUL:
 			PIN_STP_PUL_HIGH;
 			PIN_STP_PUL_LOW;
-			if(digitalRead(A3) == 1){ // stall detected
+			if(withStallDetection && digitalRead(A3) == 1){ // stall detected
 				delay(50); // delay to release the stall detection
 				return MR_Failed;
 			}
@@ -900,7 +901,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 		case AX_IDL:
 			PIN_STP_IDL_HIGH;
 			PIN_STP_IDL_LOW;
-			if(digitalRead(A5) == 1){ // stall detected
+			if(withStallDetection && digitalRead(A5) == 1){ // stall detected
 				delay(50); // delay to release the stall detection
 				if(rehomeOnFail){
 					if(homeIdlerSmooth() == MR_Success){
@@ -916,7 +917,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 		case AX_SEL:
 			PIN_STP_SEL_HIGH;
 			PIN_STP_SEL_LOW;
-			if(digitalRead(A4) == 1){ // stall detected
+			if(withStallDetection && digitalRead(A4) == 1){ // stall detected
 				delay(50); // delay to release the stall detection
 				if(rehomeOnFail){
 					if(homeSelectorSmooth() == MR_Success){

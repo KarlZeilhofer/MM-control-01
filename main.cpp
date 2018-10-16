@@ -192,7 +192,7 @@ void manual_extruder_selector()
 //! @copydoc manual_extruder_selector()
 void loop()
 {
-#ifdef TESTING
+#ifdef TESTING_L
 	testing_loop();
 #else
 	process_commands(uart_com);
