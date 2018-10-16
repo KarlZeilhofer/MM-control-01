@@ -76,11 +76,11 @@
 
 // hold currents
 #define I_HOLD_PUL 1
-#define I_HOLD_SEL 20
-#define I_HOLD_IDL 12
+#define I_HOLD_SEL 10
+#define I_HOLD_IDL 10
 
 // run currents for homing
-#define I_RUN_HOMING_PUL 30
+#define I_RUN_HOMING_PUL 31
 #define I_RUN_HOMING_SEL 31
 #define I_RUN_HOMING_IDL 31
 
