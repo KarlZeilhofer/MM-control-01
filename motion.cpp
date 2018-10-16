@@ -206,7 +206,7 @@ void load_filament_withSensor()
 				_isOk = checkOk();
 				engage_filament_pully(false);
 
-				if (_isOk) // pridat do podminky flag ze od tiskarny prislo continue
+				if (_isOk) // there is no filament in finda any more, great!
 				{
 					_continue = true;
 				}
@@ -392,7 +392,9 @@ void unload_filament_withSensor()
 /**
  * @brief load_filament_intoExtruder
  * loads filament after confirmed by printer into the Bontech
- * pulley gears so they can grab them
+ * pulley gears so they can grab them.
+ * We reduce here stepwise the motor current, to prevent grinding into the
+ * filament as good as possible.
  */
 void load_filament_intoExtruder()
 {
@@ -402,20 +404,13 @@ void load_filament_intoExtruder()
 
 	// PLA
 	tmc2130_init_axis_current(AX_PUL, 1, 15);
-	for (int i = 0; i <= 320; i++) {
-		if (i == 150) {
-			tmc2130_init_axis_current(AX_PUL, 1, 10);
-		};
-		do_pulley_step();
-		delayMicroseconds(2600);
-	}
+	move_pulley(150); // TODO 1: 384 steps/s
 
-	// PLA
+	tmc2130_init_axis_current(AX_PUL, 1, 10);
+	move_pulley(170); // TODO 1: 384 steps/s
+
 	tmc2130_init_axis_current(AX_PUL, 1, 3);
-	for (int i = 0; i <= 450; i++) {
-		do_pulley_step();
-		delayMicroseconds(2200);
-	}
+	move_pulley(450); // TODO 1: 454 steps/s
 
 	engage_filament_pully(false);
 	tmc2130_init_axis_current(AX_PUL, 0, 0);
