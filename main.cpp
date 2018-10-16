@@ -80,6 +80,8 @@ void setup()
 	stdout = uart1io; // stdout = uart1
 #endif //(UART_STD == 1)
 
+	bool requestMenu = false;
+
 	fprintf_P(uart_com, PSTR("start\n")); // startup message
 
 	spi_init();
@@ -95,6 +97,10 @@ void setup()
 	shr16_set_led(0x000);
 
 	init_Pulley();
+
+	if (buttonClicked() == Btn::middle) {
+		requestMenu = true;
+	}
 
 	// if FINDA is sensing filament do not home
 	while (isFilamentInFinda()) {
@@ -119,7 +125,7 @@ void setup()
 	tmc2130_init(false); // trinamic
 
 	// check if to goto the settings menu
-	if (buttonClicked() == Btn::middle) {
+	if(requestMenu){
 		setupMenu();
 	}
 }
