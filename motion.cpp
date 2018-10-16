@@ -420,18 +420,20 @@ void init_Pulley()
 {
 	float _speed = 3000;
 
+	// TODO 1: replace with move-commands
+
 	set_pulley_dir_push();
 	for (int i = 50; i > 0; i--) {
 		do_pulley_step();
 		delayMicroseconds(_speed);
-		shr16_set_led(1 << 2 * (int)(i / 50));
+		shr16_set_led(1 << 2 * (int)(i / 50)); // TODO 2: What the heck?
 	}
 
 	set_pulley_dir_pull();
 	for (int i = 50; i > 0; i--) {
 		do_pulley_step();
 		delayMicroseconds(_speed);
-		shr16_set_led(1 << 2 * (4 - (int)(i / 50)));
+		shr16_set_led(1 << 2 * (4 - (int)(i / 50))); // TODO 2: What the heck?
 	}
 }
 
