@@ -116,11 +116,7 @@ void setup()
 		}
 	}
 
-#ifdef TESTING
-	testing_setup();
-#else
 	home();
-#endif
 
 	tmc2130_init(false); // trinamic
 
@@ -199,22 +195,21 @@ void manual_extruder_selector()
 //! @copydoc manual_extruder_selector()
 void loop()
 {
-#ifdef TESTING
-	testing_loop();
-#else
+//#ifdef TESTING
+//	testing_loop();
+//#else
 	process_commands(uart_com);
 
 	if (!isPrinting) {
 		manual_extruder_selector();
 		if (Btn::middle == buttonClicked() && active_extruder < 5) {
 			shr16_set_led(2 << 2 * (4 - active_extruder));
-			delay(500);
 			if (Btn::middle == buttonClicked()) {
 				feed_filament();
 			}
 		}
 	}
-#endif
+//#endif
 }
 
 extern "C" {
@@ -320,8 +315,7 @@ void process_signals()
 #ifdef TESTING
 void testing_setup()
 {
-	proper_home_selector();
-
+	homeSelectorSmooth();
 }
 
 void testing_loop()
@@ -354,7 +348,7 @@ void testing_loop()
 	}
 
 	if(steps){
-		moveTest(AX_SEL, steps, speed);
+		moveSmooth(AX_SEL, steps, speed);
 	}
 
 	delay(10); // delay for counting up the speed and switch debouncing
