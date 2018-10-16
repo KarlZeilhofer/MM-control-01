@@ -116,6 +116,12 @@ void setup()
 		}
 	}
 
+
+	//homeIdlerSmooth();
+	//homeSelectorSmooth();
+	//while(1);
+
+
 	home();
 
 	tmc2130_init(false); // trinamic

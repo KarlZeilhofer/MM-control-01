@@ -19,8 +19,12 @@ int8_t filament_type[EXTRUDERS] = {-1, -1, -1, -1, -1};
 static const int SELECTOR_STEPS_AFTER_HOMING = -3700;
 static const int IDLER_STEPS_AFTER_HOMING = -130;
 
-static const int SELECTOR_STEPS = 2790 / 4;
-static const int IDLER_STEPS = 1420 / 4;                       // 2 msteps = 180 / 4
+static const int IDLER_FULL_TRAVEL_STEPS = 1420; // 16th micro steps
+	// after homing: 1420 into negative direction
+	// and 130 steps into positive direction
+
+static const int SELECTOR_STEPS = 2790 / (EXTRUDERS-1);
+static const int IDLER_STEPS = 1420 / (EXTRUDERS-1); // full travel = 1420 16th micro steps
 static const int IDLER_PARKING_STEPS = (IDLER_STEPS / 2) + 40; // 40
 
 static const int BOWDEN_LENGTH = 1000;
@@ -797,11 +801,12 @@ bool checkOk()
 
 MotReturn homeSelectorSmooth()
 {
-	for (int c = 3; c > 0; c--) // touch end 3 times
+	for (int c = 2; c > 0; c--) // touch end 3 times
 	{
-		moveSmooth(AX_SEL, -c*33, 1000, false);
-		delay(50);
-		moveSmooth(AX_SEL, 4000, c*300, false);
+		moveSmooth(AX_SEL, 4000, 2000, false); // 3000 is too fast, 2500 works, decreased to 2000 for production
+		if(c>1){
+			moveSmooth(AX_SEL, -200, 2000, false); // move a bit back
+		}
 	}
 
 	return moveSmooth(AX_SEL, SELECTOR_STEPS_AFTER_HOMING, 8000, false);
@@ -809,14 +814,15 @@ MotReturn homeSelectorSmooth()
 
 MotReturn homeIdlerSmooth()
 {
-	for (int c = 3; c > 0; c--) // touch end 3 times
+	for (int c = 2; c > 0; c--) // touch end 2 times
 	{
-		moveSmooth(AX_IDL, -c*33, 1000, false);
-		delay(50);
-		moveSmooth(AX_IDL, 4000, 300*c, false);
+		moveSmooth(AX_IDL, 2000, 3000, false);
+		if(c>1){
+			moveSmooth(AX_IDL, -300, 5000, false); // move a bit back
+		}
 	}
 
-	return moveSmooth(AX_SEL, IDLER_STEPS_AFTER_HOMING, 2000, false);
+	return moveSmooth(AX_IDL, IDLER_STEPS_AFTER_HOMING, 5000, false);
 }
 
 /**
@@ -872,6 +878,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 			PIN_STP_PUL_HIGH;
 			PIN_STP_PUL_LOW;
 			if(digitalRead(A3) == 1){ // stall detected
+				delay(50); // delay to release the stall detection
 				return MR_Failed;
 			}
 			break;
@@ -879,6 +886,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 			PIN_STP_IDL_HIGH;
 			PIN_STP_IDL_LOW;
 			if(digitalRead(A5) == 1){ // stall detected
+				delay(50); // delay to release the stall detection
 				if(rehomeOnFail){
 					if(homeIdlerSmooth() == MR_Success){
 						return MR_FailedAndRehomed;
@@ -894,6 +902,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail)
 			PIN_STP_SEL_HIGH;
 			PIN_STP_SEL_LOW;
 			if(digitalRead(A4) == 1){ // stall detected
+				delay(50); // delay to release the stall detection
 				if(rehomeOnFail){
 					if(homeSelectorSmooth() == MR_Success){
 						return MR_FailedAndRehomed;

@@ -59,20 +59,22 @@
 #define TMC2130_SPSR SPI_SPSR(TMC2130_SPI_RATE)
 
 // params:
-// SG_THR stallguard treshold (sensitivity), range -64..63, real 0-3
-// the stall guard value represents the load angle. if it reaches the treshold,
+// SG_THR stallguard treshold (sensitivity), range -64..63
+// the stall guard value represents the load angle. if it reaches 0,
 // the motor stalls. It's a 10 bit value, with	1023 in idle load (theoretically)
 // According to the whole setup, that treshold should be tuned for accurate
 // stall detection.
+// Tuning: increase treshold, if motor stalls at normal loads
+//   decrese treshold, if stall detection triggers too late
 #define TMC2130_SG_THR_PUL 5
-#define TMC2130_SG_THR_SEL 6
-#define TMC2130_SG_THR_IDL 1
+#define TMC2130_SG_THR_SEL 12 // 20 didn't work, 15 did, decreased further to 12
+#define TMC2130_SG_THR_IDL 4 // optimized value: 4 (8 and 6 didn't work)
 
 // TCOOLTHRS coolstep treshold, usable range 400-600, unit is 1/13MHz ~= 75ns
 // below that equivalent speed the stall detection is disabled
 #define TMC2130_TCOOLTHRS_0 450 // 450 = 33.8us which is equal to a speed of 115 full steps/s
 #define TMC2130_TCOOLTHRS_1 450
-#define TMC2130_TCOOLTHRS_2 450
+#define TMC2130_TCOOLTHRS_2 450 // 4100 1.0e9 ns/second / (200 uSteps/s * 256 uSteps/fullstep / 16 uStesp/fullstep)/75
 
 // hold currents
 #define I_HOLD_PUL 1
