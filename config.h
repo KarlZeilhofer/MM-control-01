@@ -64,7 +64,7 @@
 // the motor stalls. It's a 10 bit value, with	1023 in idle load (theoretically)
 // According to the whole setup, that treshold should be tuned for accurate
 // stall detection.
-// Tuning: increase treshold, if motor stalls at normal loads
+// Tuning: increase treshold, if stall detection triggers at normal loads
 //   decrese treshold, if stall detection triggers too late
 #define TMC2130_SG_THR_PUL 5
 #define TMC2130_SG_THR_SEL 12 // 20 didn't work, 15 did, decreased further to 12
