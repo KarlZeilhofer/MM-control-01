@@ -571,7 +571,6 @@ bool home_selector()
 
 void home()
 {
-
 #ifdef TESTING
     homeIdlerSmooth();
     homeSelectorSmooth();

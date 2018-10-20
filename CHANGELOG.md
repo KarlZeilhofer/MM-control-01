@@ -36,8 +36,8 @@ Changelog of MMU 2.0 Firmware
 * add explanations on stall gurad and stall guard threshold
 * retract filament on `recover_after_eject()`
   useful to inspect tips and continue afterwards
-* reduced delay for calibrating bowden length from 400ms to 100ms
-* add shell script for formatting (`format.sh`) using 
+* reduced delay for buttons on calibrating bowden length from 400ms to 100ms
+* add shell script for formatting (**`format.sh`**) using 
   Artistic Style and `.astylerc`
 * reformatted whole code with new format settings with `format.sh`
 * **merged V1.0.2** into rework branch
@@ -45,12 +45,12 @@ Changelog of MMU 2.0 Firmware
 ## TODO
 * undo: simplified `load_filament_intoExtruder()` by using move-commands
 * fix movement of idler
-
+* add test for full travel with selector after homing
 
 
 # V1.0.2
 * fixed current settings
-* silent mode support
+* stealth mode support
 * anything else?
 
 

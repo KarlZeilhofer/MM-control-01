@@ -79,12 +79,12 @@
 #define TMC2130_TCOOLTHRS_1 450
 #define TMC2130_TCOOLTHRS_2 450 // 4100 1.0e9 ns/second / (200 uSteps/s * 256 uSteps/fullstep / 16 uStesp/fullstep)/75
 
-// currents
-#define CURRENT_HOLDING_STEALTH {1, 7, 16}
-#define CURRENT_HOLDING_NORMAL {1, 10, 22}
-#define CURRENT_RUNNING_STEALTH {35, 35, 35}
-#define CURRENT_RUNNING_NORMAL {30, 35, 35}
-#define CURRENT_HOMING {1, 35, 30}
+// currents for pulley, selector and idler
+#define CURRENT_HOLDING_STEALTH     { 1,  7, 16}
+#define CURRENT_HOLDING_NORMAL      { 1, 10, 22}
+#define CURRENT_RUNNING_STEALTH     {35, 35, 35}
+#define CURRENT_RUNNING_NORMAL      {30, 35, 35}
+#define CURRENT_HOMING              { 1, 35, 30}
 
 //mode
 #define HOMING_MODE 0
@@ -149,7 +149,7 @@
 
 
 // diagnostic functions
-//#define _DIAG
+#define _DIAG
 
 // testing motion controller
 #define TESTING
