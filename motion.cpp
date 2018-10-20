@@ -677,17 +677,17 @@ void move_pulley(int steps, uint16_t speed)
 
 
 #else
-void move_idler(int steps)
+void move_idler(int steps, uint16_t dummy)
 {
     move(steps, 0, 0);
 }
 
-void move_selector(int steps)
+void move_selector(int steps, uint16_t dummy)
 {
     move(0, steps, 0);
 }
 
-void move_pulley(int steps)
+void move_pulley(int steps, uint16_t dummy)
 {
     move(0, 0, steps);
 }

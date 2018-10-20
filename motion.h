@@ -35,9 +35,9 @@ void move_idler(int steps, uint16_t speed = 2000);
 void move_selector(int steps, uint16_t speed = 5000);
 void move_pulley(int steps, uint16_t speed = 2000);
 #else
-void move_idler(int steps);
-void move_selector(int steps);
-void move_pulley(int steps);
+void move_idler(int steps, uint16_t dummy = 0);
+void move_selector(int steps, uint16_t dummy = 0);
+void move_pulley(int steps, uint16_t dummy = 0);
 #endif
 void move_proportional(int _idler, int _selector);
 void eject_filament(int extruder);

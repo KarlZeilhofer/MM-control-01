@@ -149,7 +149,7 @@
 
 
 // diagnostic functions
-#define _DIAG
+//#define _DIAG
 
 // testing motion controller
 #define TESTING
