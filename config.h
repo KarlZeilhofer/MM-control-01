@@ -61,7 +61,7 @@
 // params:
 // SG_THR stallguard treshold (sensitivity), range -64..63
 // the stall guard value represents the load angle. if it reaches 0,
-// the motor stalls. It's a 10 bit value, with	1023 in idle load (theoretically)
+// the motor stalls. It's a 10 bit value, with  1023 in idle load (theoretically)
 // According to the whole setup, that treshold should be tuned for accurate
 // stall detection.
 // Tuning: increase treshold, if stall detection triggers at normal loads

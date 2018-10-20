@@ -19,8 +19,8 @@ void process_signals();
 #define SIG_SET(id) (sys_signals |= (1 << id))
 // get state of signal (main loop only)
 #define SIG_CLR(id)                                                                                                    \
-	asm("cli");                                                                                                        \
-	sys_signals &= ~(1 << id);                                                                                         \
-	asm("sei")
+    asm("cli");                                                                                                        \
+    sys_signals &= ~(1 << id);                                                                                         \
+    asm("sei")
 
 #endif //_MAIN_H

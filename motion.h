@@ -44,10 +44,10 @@ void eject_filament(int extruder);
 void recover_after_eject();
 
 #ifdef TESTING
-enum MotReturn{MR_Success, MR_FailedAndRehomed, MR_Failed};
+enum MotReturn {MR_Success, MR_FailedAndRehomed, MR_Failed};
 MotReturn homeSelectorSmooth();
 MotReturn moveSmooth(uint8_t axis, int steps, int speed,
-					 bool rehomeOnFail = true, bool withStallDetection = true);
+                     bool rehomeOnFail = true, bool withStallDetection = true);
 MotReturn homeIdlerSmooth();
 MotReturn homeSelectorSmooth();
 #endif

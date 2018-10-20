@@ -79,3 +79,6 @@ SOURCES += uart.cpp
 HEADERS += main.h
 HEADERS += abtn3.h
 
+DISTFILES += \
+    .astylerc
+

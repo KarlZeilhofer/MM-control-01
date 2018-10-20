@@ -54,49 +54,52 @@ static void tmc2130_tx(uint8_t axis, uint8_t addr, uint32_t wval);
 uint8_t tmc2130_rx(uint8_t axis, uint8_t addr, uint32_t *rval);
 uint8_t tmc2130_usteps2mres(uint16_t usteps);
 
-int8_t tmc2130_wr_CHOPCONF(uint8_t axis, uint8_t toff, uint8_t hstrt, uint8_t hend, uint8_t fd3, uint8_t disfdcc,
-						   uint8_t rndtf, uint8_t chm, uint8_t tbl, uint8_t vsense, uint8_t vhighfs, uint8_t vhighchm,
-						   uint8_t sync, uint8_t mres, uint8_t intpol, uint8_t dedge, uint8_t diss2g)
+int8_t tmc2130_wr_CHOPCONF(uint8_t axis, uint8_t toff, uint8_t hstrt, uint8_t hend, uint8_t fd3,
+                           uint8_t disfdcc, uint8_t rndtf, uint8_t chm, uint8_t tbl, uint8_t vsense, uint8_t vhighfs,
+                           uint8_t vhighchm, uint8_t sync, uint8_t mres, uint8_t intpol, uint8_t dedge, uint8_t diss2g)
 {
-	uint32_t val = 0;
-	val |= (uint32_t)(toff & 15);
-	val |= (uint32_t)(hstrt & 7) << 4;
-	val |= (uint32_t)(hend & 15) << 7;
-	val |= (uint32_t)(fd3 & 1) << 11;
-	val |= (uint32_t)(disfdcc & 1) << 12;
-	val |= (uint32_t)(rndtf & 1) << 13;
-	val |= (uint32_t)(chm & 1) << 14;
-	val |= (uint32_t)(tbl & 3) << 15;
-	val |= (uint32_t)(vsense & 1) << 17;
-	val |= (uint32_t)(vhighfs & 1) << 18;
-	val |= (uint32_t)(vhighchm & 1) << 19;
-	val |= (uint32_t)(sync & 15) << 20;
-	val |= (uint32_t)(mres & 15) << 24;
-	val |= (uint32_t)(intpol & 1) << 28;
-	val |= (uint32_t)(dedge & 1) << 29;
-	val |= (uint32_t)(diss2g & 1) << 30;
-	tmc2130_wr(axis, TMC2130_REG_CHOPCONF, val);
-	// uint32_t valr = 0;
-	// tmc2130_rd(axis, TMC2130_REG_CHOPCONF, &valr);
-	// printf_P(PSTR("tmc2130_wr_CHOPCONF out=0x%08lx in=0x%08lx\n"), val, valr);
-	// return (val == valr)?0:-1;
-	return 0;
+    uint32_t val = 0;
+    val |= (uint32_t)(toff & 15);
+    val |= (uint32_t)(hstrt & 7) << 4;
+    val |= (uint32_t)(hend & 15) << 7;
+    val |= (uint32_t)(fd3 & 1) << 11;
+    val |= (uint32_t)(disfdcc & 1) << 12;
+    val |= (uint32_t)(rndtf & 1) << 13;
+    val |= (uint32_t)(chm & 1) << 14;
+    val |= (uint32_t)(tbl & 3) << 15;
+    val |= (uint32_t)(vsense & 1) << 17;
+    val |= (uint32_t)(vhighfs & 1) << 18;
+    val |= (uint32_t)(vhighchm & 1) << 19;
+    val |= (uint32_t)(sync & 15) << 20;
+    val |= (uint32_t)(mres & 15) << 24;
+    val |= (uint32_t)(intpol & 1) << 28;
+    val |= (uint32_t)(dedge & 1) << 29;
+    val |= (uint32_t)(diss2g & 1) << 30;
+    tmc2130_wr(axis, TMC2130_REG_CHOPCONF, val);
+    // uint32_t valr = 0;
+    // tmc2130_rd(axis, TMC2130_REG_CHOPCONF, &valr);
+    // printf_P(PSTR("tmc2130_wr_CHOPCONF out=0x%08lx in=0x%08lx\n"), val, valr);
+    // return (val == valr)?0:-1;
+    return 0;
 }
 
-void tmc2130_wr_PWMCONF(uint8_t axis, uint8_t pwm_ampl, uint8_t pwm_grad, uint8_t pwm_freq, uint8_t pwm_auto,
-						uint8_t pwm_symm, uint8_t freewheel)
+void tmc2130_wr_PWMCONF(uint8_t axis, uint8_t pwm_ampl, uint8_t pwm_grad, uint8_t pwm_freq,
+                        uint8_t pwm_auto, uint8_t pwm_symm, uint8_t freewheel)
 {
-	uint32_t val = 0;
-	val |= (uint32_t)(pwm_ampl & 255);
-	val |= (uint32_t)(pwm_grad & 255) << 8;
-	val |= (uint32_t)(pwm_freq & 3) << 16;
-	val |= (uint32_t)(pwm_auto & 1) << 18;
-	val |= (uint32_t)(pwm_symm & 1) << 19;
-	val |= (uint32_t)(freewheel & 3) << 20;
-	tmc2130_wr(axis, TMC2130_REG_PWMCONF, val);
+    uint32_t val = 0;
+    val |= (uint32_t)(pwm_ampl & 255);
+    val |= (uint32_t)(pwm_grad & 255) << 8;
+    val |= (uint32_t)(pwm_freq & 3) << 16;
+    val |= (uint32_t)(pwm_auto & 1) << 18;
+    val |= (uint32_t)(pwm_symm & 1) << 19;
+    val |= (uint32_t)(freewheel & 3) << 20;
+    tmc2130_wr(axis, TMC2130_REG_PWMCONF, val);
 }
 
-void tmc2130_wr_TPWMTHRS(uint8_t axis, uint32_t val32) { tmc2130_wr(axis, TMC2130_REG_TPWMTHRS, val32); }
+void tmc2130_wr_TPWMTHRS(uint8_t axis, uint32_t val32)
+{
+    tmc2130_wr(axis, TMC2130_REG_TPWMTHRS, val32);
+}
 
 /**
  * @brief tmc2130_setup_chopper
@@ -110,120 +113,126 @@ void tmc2130_wr_TPWMTHRS(uint8_t axis, uint32_t val32) { tmc2130_wr(axis, TMC213
  */
 int8_t tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint8_t current_r)
 {
-	uint8_t intpol = 1;
-	uint8_t toff = 3;  // toff = 3 (fchop = 27.778kHz)
-	uint8_t hstrt = 5; // initial 4, modified to 5
-	uint8_t hend = 1;
-	uint8_t fd3 = 0;
-	uint8_t rndtf = 0; // random off time
-	uint8_t chm = 0;   // spreadCycle
-	uint8_t tbl = 2;   // blanking time
+    uint8_t intpol = 1;
+    uint8_t toff = 3;  // toff = 3 (fchop = 27.778kHz)
+    uint8_t hstrt = 5; // initial 4, modified to 5
+    uint8_t hend = 1;
+    uint8_t fd3 = 0;
+    uint8_t rndtf = 0; // random off time
+    uint8_t chm = 0;   // spreadCycle
+    uint8_t tbl = 2;   // blanking time
 
-	// distinguish small and large current values and set the vsens bit accordingly.
-	// the current registers allow only values between 0 and 31 (5 bit)
-	if (current_r <= 31) {
-		uint8_t vsens = 1; // high sensitivity of current measurement
-		if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, vsens, 0, 0, 0, mres, intpol, 0, 0))
-			return -1;
-	} else {
-		uint8_t vsens = 0; // low sensitivity of current measurement
-		current_r /= 2; // scale current to 0..31
-		current_h /= 2; // scale current to 0..31
+    // distinguish small and large current values and set the vsens bit accordingly.
+    // the current registers allow only values between 0 and 31 (5 bit)
+    if (current_r <= 31) {
+        uint8_t vsens = 1; // high sensitivity of current measurement
+        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, vsens, 0, 0, 0, mres,
+                                intpol, 0, 0)) {
+            return -1;
+        }
+    } else {
+        uint8_t vsens = 0; // low sensitivity of current measurement
+        current_r /= 2; // scale current to 0..31
+        current_h /= 2; // scale current to 0..31
 
-		if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, vsens, 0, 0, 0, mres, intpol, 0, 0))
-			return -1;
-	}
-	tmc2130_wr(axis, TMC2130_REG_IHOLD_IRUN, 0x000f0000 | ((current_r & 0x1f) << 8) | (current_h & 0x1f));
-	return 0;
+        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, vsens, 0, 0, 0, mres, intpol, 0,
+                                0)) {
+            return -1;
+        }
+    }
+    tmc2130_wr(axis, TMC2130_REG_IHOLD_IRUN,
+               0x000f0000 | ((current_r & 0x1f) << 8) | (current_h & 0x1f));
+    return 0;
 }
 
 inline uint16_t __tcoolthrs(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		return TMC2130_TCOOLTHRS_0;
-	case 1:
-		return TMC2130_TCOOLTHRS_1;
-	case 2:
-		return TMC2130_TCOOLTHRS_2;
-	}
-	return TMC2130_TCOOLTHRS;
+    switch (axis) {
+    case 0:
+        return TMC2130_TCOOLTHRS_0;
+    case 1:
+        return TMC2130_TCOOLTHRS_1;
+    case 2:
+        return TMC2130_TCOOLTHRS_2;
+    }
+    return TMC2130_TCOOLTHRS;
 }
 
 inline int8_t __sg_thr(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		return TMC2130_SG_THR_PUL;
-	case 1:
-		return TMC2130_SG_THR_SEL;
-	case 2:
-		return TMC2130_SG_THR_IDL;
-	}
-	return TMC2130_SG_THR;
+    switch (axis) {
+    case 0:
+        return TMC2130_SG_THR_PUL;
+    case 1:
+        return TMC2130_SG_THR_SEL;
+    case 2:
+        return TMC2130_SG_THR_IDL;
+    }
+    return TMC2130_SG_THR;
 }
 
 //! holding current
 inline int8_t __curh(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		return I_HOLD_PUL;
-	case 1:
-		return I_HOLD_SEL;
-	case 2:
-		return I_HOLD_IDL;
-	}
-	return 16;
+    switch (axis) {
+    case 0:
+        return I_HOLD_PUL;
+    case 1:
+        return I_HOLD_SEL;
+    case 2:
+        return I_HOLD_IDL;
+    }
+    return 16;
 }
 
 //! running currents for homing
 inline int8_t __curr(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		return I_RUN_HOMING_PUL;
-	case 1:
-		return I_RUN_HOMING_SEL;
-	case 2:
-		return I_RUN_HOMING_IDL;
-	}
-	return 16;
+    switch (axis) {
+    case 0:
+        return I_RUN_HOMING_PUL;
+    case 1:
+        return I_RUN_HOMING_SEL;
+    case 2:
+        return I_RUN_HOMING_IDL;
+    }
+    return 16;
 }
 
 //! running current, when already homed
 inline int8_t __currh(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		return I_RUN_PUL;
-	case 1:
-		return I_RUN_SEL;
-	case 2:
-		return I_RUN_IDL;
-	}
-	return 16;
+    switch (axis) {
+    case 0:
+        return I_RUN_PUL;
+    case 1:
+        return I_RUN_SEL;
+    case 2:
+        return I_RUN_IDL;
+    }
+    return 16;
 }
 
 inline int8_t __res(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		return tmc2130_usteps2mres((uint16_t)2);
-	case 1:
-		return tmc2130_usteps2mres((uint16_t)2);
-	case 2:
-		return tmc2130_usteps2mres((uint16_t)16);
-	}
-	return 16;
+    switch (axis) {
+    case 0:
+        return tmc2130_usteps2mres((uint16_t)2);
+    case 1:
+        return tmc2130_usteps2mres((uint16_t)2);
+    case 2:
+        return tmc2130_usteps2mres((uint16_t)16);
+    }
+    return 16;
 }
 
 uint8_t tmc2130_usteps2mres(uint16_t usteps)
 {
-	uint8_t mres = 8;
-	while (mres && (usteps >>= 1))
-		mres--;
-	return mres;
+    uint8_t mres = 8;
+    while (mres && (usteps >>= 1)) {
+        mres--;
+    }
+    return mres;
 }
 
 // axis config
@@ -235,32 +244,36 @@ uint8_t tmc2130_usteps2mres(uint16_t usteps)
 // byte 3
 int8_t tmc2130_init_axis(uint8_t axis, bool homing)
 {
-	/* //silent mode
-		tmc2130_setup_chopper(axis, 7, 16, 16);
-		tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN,
-		0x00000000);
-		tmc2130_wr(axis, TMC2130_REG_COOLCONF,
-		(((uint32_t)TMC2130_SG_THR) << 16));
-		tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, 0);
-		tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00000004);
-		tmc2130_wr_PWMCONF(axis, 150, 2, 2, 1, 0, 0);
-		tmc2130_wr_TPWMTHRS(axis, 0);
-	*/
-	// uint8_t mres = 7;
-	// uint16_t tcoolthrs = 450;
-	if (homing) {
-		if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), (uint32_t)__curh(axis), (uint32_t)__curr(axis)))
-			return -1;
-	} else {
-		if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), (uint32_t)__curh(axis), (uint32_t)__currh(axis)))
-			return -1;
-	}
+    /* //silent mode
+        tmc2130_setup_chopper(axis, 7, 16, 16);
+        tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN,
+        0x00000000);
+        tmc2130_wr(axis, TMC2130_REG_COOLCONF,
+        (((uint32_t)TMC2130_SG_THR) << 16));
+        tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, 0);
+        tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00000004);
+        tmc2130_wr_PWMCONF(axis, 150, 2, 2, 1, 0, 0);
+        tmc2130_wr_TPWMTHRS(axis, 0);
+    */
+    // uint8_t mres = 7;
+    // uint16_t tcoolthrs = 450;
+    if (homing) {
+        if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), (uint32_t)__curh(axis),
+                                  (uint32_t)__curr(axis))) {
+            return -1;
+        }
+    } else {
+        if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), (uint32_t)__curh(axis),
+                                  (uint32_t)__currh(axis))) {
+            return -1;
+        }
+    }
 
-	tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
-	tmc2130_wr(axis, TMC2130_REG_COOLCONF, (((uint32_t)__sg_thr(axis)) << 16));
-	tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, __tcoolthrs(axis));
-	tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00003180);
-	return 0;
+    tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
+    tmc2130_wr(axis, TMC2130_REG_COOLCONF, (((uint32_t)__sg_thr(axis)) << 16));
+    tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, __tcoolthrs(axis));
+    tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00003180);
+    return 0;
 }
 
 /**
@@ -272,94 +285,97 @@ int8_t tmc2130_init_axis(uint8_t axis, bool homing)
  */
 int8_t tmc2130_init_axis_current(uint8_t axis, uint8_t current_h, uint8_t current_r)
 {
-	if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), current_h, current_r)){
-		return -1;
-	}
+    if (tmc2130_setup_chopper(axis, (uint32_t)__res(axis), current_h, current_r)) {
+        return -1;
+    }
 
-	// immediate power down after motion stops (--> hold current)
-	tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0); // 0 seconds
+    // immediate power down after motion stops (--> hold current)
+    tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0); // 0 seconds
 
-	// set tuned limit for stall detection (-64...+63 stall guard value units (90° equals 1023))
-	tmc2130_wr(axis, TMC2130_REG_COOLCONF, (((uint32_t)__sg_thr(axis)) << 16));
+    // set tuned limit for stall detection (-64...+63 stall guard value units (90° equals 1023))
+    tmc2130_wr(axis, TMC2130_REG_COOLCONF, (((uint32_t)__sg_thr(axis)) << 16));
 
-	// set minimum speed, for which stall detection is then enabled
-	// Unit: 1/fCLK, derived from 1/256 microsteps
-	// fCLK is with internal clock about 13MHz
-	tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, __tcoolthrs(axis));
+    // set minimum speed, for which stall detection is then enabled
+    // Unit: 1/fCLK, derived from 1/256 microsteps
+    // fCLK is with internal clock about 13MHz
+    tmc2130_wr(axis, TMC2130_REG_TCOOLTHRS, __tcoolthrs(axis));
 
-	// all bits false, except:
-	// bit7/8: diag0/1_stall
-	// 12,13: diag0/1: push-pull output
-	// --> both diag outputs operate identical on a stall event
-	tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00003180);
-	return 0;
+    // all bits false, except:
+    // bit7/8: diag0/1_stall
+    // 12,13: diag0/1: push-pull output
+    // --> both diag outputs operate identical on a stall event
+    tmc2130_wr(axis, TMC2130_REG_GCONF, 0x00003180);
+    return 0;
 }
 
 #ifdef _DIAG
-uint8_t tmc2130_check_axis(uint8_t axis) { return 0x3f; }
+uint8_t tmc2130_check_axis(uint8_t axis)
+{
+    return 0x3f;
+}
 #endif
 
 int8_t tmc2130_init(bool homing)
 {
-	DDRC |= 0x40; // C6
-	DDRD |= 0x80; // D7
-	DDRB |= 0x80; // B7
+    DDRC |= 0x40; // C6
+    DDRD |= 0x80; // D7
+    DDRB |= 0x80; // B7
 
-	PORTC |= 0x40; // C6
-	PORTD |= 0x80; // D7
-	PORTB |= 0x80; // B7
+    PORTC |= 0x40; // C6
+    PORTD |= 0x80; // D7
+    PORTB |= 0x80; // B7
 
-	DDRD |= 0x10; // D4, step selector
-	DDRB |= 0x10; // B4, step pulley
-	DDRD |= 0x40; // D6, step idler
+    DDRD |= 0x10; // D4, step selector
+    DDRB |= 0x10; // B4, step pulley
+    DDRD |= 0x40; // D6, step idler
 
-	PIN_STP_SEL_LOW;
-	PIN_STP_PUL_LOW;
-	PIN_STP_IDL_LOW;
+    PIN_STP_SEL_LOW;
+    PIN_STP_PUL_LOW;
+    PIN_STP_IDL_LOW;
 
-	int8_t ret = 0;
-	ret += tmc2130_init_axis(AX_PUL, homing) ? -1 : 0;
-	ret += tmc2130_init_axis(AX_SEL, homing) ? -2 : 0;
-	ret += tmc2130_init_axis(AX_IDL, homing) ? -4 : 0;
+    int8_t ret = 0;
+    ret += tmc2130_init_axis(AX_PUL, homing) ? -1 : 0;
+    ret += tmc2130_init_axis(AX_SEL, homing) ? -2 : 0;
+    ret += tmc2130_init_axis(AX_IDL, homing) ? -4 : 0;
 
-	return ret;
+    return ret;
 }
 
 uint16_t tmc2130_read_sg(uint8_t axis)
 {
-	uint32_t val32 = 0;
-	tmc2130_rd(axis, TMC2130_REG_DRV_STATUS, &val32);
-	return (val32 & 0x3ff);
+    uint32_t val32 = 0;
+    tmc2130_rd(axis, TMC2130_REG_DRV_STATUS, &val32);
+    return (val32 & 0x3ff);
 }
 
 inline void tmc2130_cs_low(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		PORTC &= ~0x40;
-		break;
-	case 1:
-		PORTD &= ~0x80;
-		break;
-	case 2:
-		PORTB &= ~0x80;
-		break; //// black board
-	}
+    switch (axis) {
+    case 0:
+        PORTC &= ~0x40;
+        break;
+    case 1:
+        PORTD &= ~0x80;
+        break;
+    case 2:
+        PORTB &= ~0x80;
+        break; //// black board
+    }
 }
 
 inline void tmc2130_cs_high(uint8_t axis)
 {
-	switch (axis) {
-	case 0:
-		PORTC |= 0x40;
-		break;
-	case 1:
-		PORTD |= 0x80;
-		break;
-	case 2:
-		PORTB |= 0x80;
-		break; //// black board
-	}
+    switch (axis) {
+    case 0:
+        PORTC |= 0x40;
+        break;
+    case 1:
+        PORTD |= 0x80;
+        break;
+    case 2:
+        PORTB |= 0x80;
+        break; //// black board
+    }
 }
 
 // Arduino SPI
@@ -374,42 +390,43 @@ inline void tmc2130_cs_high(uint8_t axis)
 
 void tmc2130_tx(uint8_t axis, uint8_t addr, uint32_t wval)
 {
-	// datagram1 - request
-	TMC2130_SPI_ENTER();
-	tmc2130_cs_low(axis);
-	TMC2130_SPI_TXRX(addr);                // address
-	TMC2130_SPI_TXRX((wval >> 24) & 0xff); // MSB
-	TMC2130_SPI_TXRX((wval >> 16) & 0xff);
-	TMC2130_SPI_TXRX((wval >> 8) & 0xff);
-	TMC2130_SPI_TXRX(wval & 0xff); // LSB
-	tmc2130_cs_high(axis);
-	TMC2130_SPI_LEAVE();
+    // datagram1 - request
+    TMC2130_SPI_ENTER();
+    tmc2130_cs_low(axis);
+    TMC2130_SPI_TXRX(addr);                // address
+    TMC2130_SPI_TXRX((wval >> 24) & 0xff); // MSB
+    TMC2130_SPI_TXRX((wval >> 16) & 0xff);
+    TMC2130_SPI_TXRX((wval >> 8) & 0xff);
+    TMC2130_SPI_TXRX(wval & 0xff); // LSB
+    tmc2130_cs_high(axis);
+    TMC2130_SPI_LEAVE();
 }
 
 uint8_t tmc2130_rx(uint8_t axis, uint8_t addr, uint32_t *rval)
 {
-	// datagram1 - request
-	TMC2130_SPI_ENTER();
-	tmc2130_cs_low(axis);
-	TMC2130_SPI_TXRX(addr); // address
-	TMC2130_SPI_TXRX(0);    // MSB
-	TMC2130_SPI_TXRX(0);
-	TMC2130_SPI_TXRX(0);
-	TMC2130_SPI_TXRX(0); // LSB
-	tmc2130_cs_high(axis);
-	TMC2130_SPI_LEAVE();
-	// datagram2 - response
-	TMC2130_SPI_ENTER();
-	tmc2130_cs_low(axis);
-	uint8_t stat = TMC2130_SPI_TXRX(0); // status
-	uint32_t val32 = 0;
-	val32 = TMC2130_SPI_TXRX(0); // MSB
-	val32 = (val32 << 8) | TMC2130_SPI_TXRX(0);
-	val32 = (val32 << 8) | TMC2130_SPI_TXRX(0);
-	val32 = (val32 << 8) | TMC2130_SPI_TXRX(0); // LSB
-	tmc2130_cs_high(axis);
-	TMC2130_SPI_LEAVE();
-	if (rval != 0)
-		*rval = val32;
-	return stat;
+    // datagram1 - request
+    TMC2130_SPI_ENTER();
+    tmc2130_cs_low(axis);
+    TMC2130_SPI_TXRX(addr); // address
+    TMC2130_SPI_TXRX(0);    // MSB
+    TMC2130_SPI_TXRX(0);
+    TMC2130_SPI_TXRX(0);
+    TMC2130_SPI_TXRX(0); // LSB
+    tmc2130_cs_high(axis);
+    TMC2130_SPI_LEAVE();
+    // datagram2 - response
+    TMC2130_SPI_ENTER();
+    tmc2130_cs_low(axis);
+    uint8_t stat = TMC2130_SPI_TXRX(0); // status
+    uint32_t val32 = 0;
+    val32 = TMC2130_SPI_TXRX(0); // MSB
+    val32 = (val32 << 8) | TMC2130_SPI_TXRX(0);
+    val32 = (val32 << 8) | TMC2130_SPI_TXRX(0);
+    val32 = (val32 << 8) | TMC2130_SPI_TXRX(0); // LSB
+    tmc2130_cs_high(axis);
+    TMC2130_SPI_LEAVE();
+    if (rval != 0) {
+        *rval = val32;
+    }
+    return stat;
 }
