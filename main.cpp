@@ -17,6 +17,7 @@
 #include <avr/wdt.h>
 #include "permanent_storage.h"
 
+
 // public variables:
 int8_t sys_state = 0;
 uint8_t sys_signals = 0;
