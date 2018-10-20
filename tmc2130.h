@@ -30,6 +30,10 @@ void tmc2130_disable_axis(uint8_t axis, uint8_t mode);
 
 uint16_t tmc2130_read_sg(uint8_t axis);
 
+#ifdef _DIAG
+uint8_t tmc2130_check_axis(uint8_t axis);
+#endif
+
 #if defined(__cplusplus)
 }
 #endif // defined(__cplusplus)

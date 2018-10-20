@@ -1,13 +1,16 @@
 // diag.c - Trinamic stepper driver
 
 #include "diag.h"
+
 #ifdef _DIAG
+
 
 #include <avr/pgmspace.h>
 #include "uart.h"
 #include "abtn3.h"
 #include "tmc2130.h"
 #include "main.h"
+#include "tmc2130.h"
 
 
 int8_t cmd_uart_bridge(FILE *inout)
