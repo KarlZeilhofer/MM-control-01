@@ -126,7 +126,7 @@ int8_t tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint
     // the current registers allow only values between 0 and 31 (5 bit)
     if (current_r <= 31) {
         uint8_t vsens = 1; // high sensitivity of current measurement
-        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, 
+        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl,
                                 vsens, 0, 0, 0, mres, intpol, 0, 0)) {
             return -1;
         }
@@ -135,7 +135,7 @@ int8_t tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint
         current_r /= 2; // scale current to 0..31
         current_h /= 2; // scale current to 0..31
 
-        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, 
+        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl,
                                 vsens, 0, 0, 0, mres, intpol, 0, 0)) {
             return -1;
         }

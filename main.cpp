@@ -272,7 +272,6 @@ extern "C" {
                 default:
                     return;
                 }
-
                 //init all axes
                 tmc2130_init(tmc2130_mode);
                 fprintf_P(inout, PSTR("ok\n"));
@@ -320,18 +319,6 @@ extern "C" {
                 if (value == 0) { // R0: recover after eject filament
                     recover_after_eject();
                     fprintf_P(inout, PSTR("ok\n"));
-                }
-            } else if (sscanf_P(line, PSTR("M%d"), &value) > 0) {
-                // M0: set to normal mode; M1: set to stealth mode
-                switch (value) {
-                case 0:
-                    tmc2130_mode = NORMAL_MODE;
-                    break;
-                case 1:
-                    tmc2130_mode = STEALTH_MODE;
-                    break;
-                default:
-                    return;
                 }
             } else {
                 // nothing received

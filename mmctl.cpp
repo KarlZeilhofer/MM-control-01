@@ -74,7 +74,7 @@ bool feed_filament()
     }
 
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
-	engage_filament_pully(false);
+    engage_filament_pully(false);
     shr16_set_led(1 << 2 * (4 - active_extruder));
     return true;
 }

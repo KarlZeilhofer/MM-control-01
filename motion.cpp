@@ -77,7 +77,7 @@ void eject_filament(int extruder)
     }
 
 
-    engage_filament_pully(true); 
+    engage_filament_pully(true);
     tmc2130_init_axis(AX_PUL, tmc2130_mode);
 
 
@@ -260,7 +260,7 @@ void load_filament_withSensor()
     }
 
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
- 
+
     isFilamentLoaded = true; // filament loaded
 }
 
@@ -405,7 +405,7 @@ void unload_filament_withSensor()
     }
     engage_filament_pully(false);
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
- 
+
     isFilamentLoaded = false; // filament unloaded
 }
 
@@ -418,11 +418,11 @@ void unload_filament_withSensor()
  */
 void load_filament_intoExtruder()
 {
-	uint8_t current_running_normal[3] = CURRENT_RUNNING_NORMAL;
-	uint8_t current_running_stealth[3] = CURRENT_RUNNING_STEALTH;
-	uint8_t current_holding_normal[3] = CURRENT_HOLDING_NORMAL;
-	uint8_t current_holding_stealth[3] = CURRENT_HOLDING_STEALTH;
-	
+    uint8_t current_running_normal[3] = CURRENT_RUNNING_NORMAL;
+    uint8_t current_running_stealth[3] = CURRENT_RUNNING_STEALTH;
+    uint8_t current_holding_normal[3] = CURRENT_HOLDING_NORMAL;
+    uint8_t current_holding_stealth[3] = CURRENT_HOLDING_STEALTH;
+
     engage_filament_pully(
         true); // if idler is in parked position un-park him get in contact with filament
     set_pulley_dir_push();
@@ -452,7 +452,7 @@ void load_filament_intoExtruder()
 
     engage_filament_pully(false);
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
- 
+
 }
 
 void init_Pulley()
