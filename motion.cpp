@@ -942,7 +942,7 @@ MotReturn homeIdlerSmooth()
  * @return
  */
 // TODO 3: compensate delay for computation time, to get accurate speeds
-// TODO 3: add callback or another parameter, which can stop the motion 
+// TODO 3: add callback or another parameter, which can stop the motion
 // (e.g. for testing FINDA, timeout, soft stall guard limits, push buttons...)
 MotReturn moveSmooth(uint8_t axis, int steps, int speed,
                      bool rehomeOnFail, bool withStallDetection)
@@ -954,11 +954,6 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed,
     }
 
     shr16_set_led(0);
-    enum State {
-        Accelerate = 0,
-        ConstVelocity = 1,
-        Decelerate = 2,
-    };
 
     float vMax = speed;
     float acc = ACC_NORMAL; // Note: tested selector successfully with 100k
@@ -983,8 +978,13 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed,
         break;
     }
 
-    // State st = State::Accelerate;
-    int st = 0;
+    enum State {
+        Accelerate = 0,
+        ConstVelocity = 1,
+        Decelerate = 2,
+    };
+
+    State st = Accelerate;
     shr16_set_led(1 << 0);
 
     v = v0;
@@ -1040,30 +1040,30 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed,
         delayMicroseconds(1e6 * dt);
 
         switch (st) {
-        case 0://State::Accelerate :
+        case Accelerate:
             v += acc * dt;
             if (v >= vMax) {
                 accSteps = stepsDone;
-                st = 1;//State::ConstVelocity;
+                st = ConstVelocity;
                 shr16_set_led(1 << 2);
 
                 v = vMax;
             } else if (stepsDone > stepsLeft) {
                 accSteps = stepsDone;
-                st = 2;//State::Decelerate;
+                st = Decelerate;
                 shr16_set_led(1 << 4);
 
             }
             break;
-        case 1: { //State::ConstVelocity :
+        case ConstVelocity: {
             volatile float dummy = acc * dt; // keep same timing in branches of switch
             if (stepsLeft <= accSteps) {
-                st = 2;//State::Decelerate;
+                st = Decelerate;
                 shr16_set_led(1 << 4);
             }
         }
         break;
-        case 2: {//State::Decelerate :
+        case Decelerate: {
             v -= acc * dt;
             if (v < v0) {
                 v = v0;
