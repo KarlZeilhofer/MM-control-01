@@ -41,11 +41,12 @@ Changelog of MMU 2.0 Firmware
   Artistic Style and `.astylerc`
 * reformatted whole code with new format settings with `format.sh`
 * **merged V1.0.2** into rework branch
+* add define TESTING_STEALTH
+* defined max. speeds and acceleration for normal and stealth mode
 
 ## TODO
 * undo: simplified `load_filament_intoExtruder()` by using move-commands
-* fix movement of idler
-* add test for full travel with selector after homing
+  needed when compiled without TESTING
 
 
 # V1.0.2
