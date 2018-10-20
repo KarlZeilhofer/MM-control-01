@@ -86,6 +86,15 @@
 #define CURRENT_RUNNING_NORMAL      {30, 35, 35}
 #define CURRENT_HOMING              { 1, 35, 30}
 
+// speeds and accelerations
+#define MAX_SPEED_PUL 2000 // micro steps
+#define MAX_SPEED_SEL 5000 // micro steps
+#define MAX_SPEED_STEALTH_SEL 2000 // micro steps
+#define MAX_SPEED_IDL 2000 // micro steps
+#define ACC_NORMAL 50000 // micro steps / s²
+#define ACC_STEALTH 15000 // micro steps / s²
+
+
 //mode
 #define HOMING_MODE 0
 #define NORMAL_MODE 1

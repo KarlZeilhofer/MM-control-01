@@ -31,9 +31,9 @@ void set_pulley_dir_push();
 
 void move(int _idler, int _selector, int _pulley);
 #ifdef TESTING
-void move_idler(int steps, uint16_t speed = 2000);
-void move_selector(int steps, uint16_t speed = 5000);
-void move_pulley(int steps, uint16_t speed = 2000);
+void move_idler(int steps, uint16_t speed = MAX_SPEED_IDL);
+void move_selector(int steps, uint16_t speed = MAX_SPEED_SEL);
+void move_pulley(int steps, uint16_t speed = MAX_SPEED_PUL);
 #else
 void move_idler(int steps, uint16_t dummy = 0);
 void move_selector(int steps, uint16_t dummy = 0);

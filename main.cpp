@@ -91,6 +91,7 @@ void setup()
     spi_init();
     led_blink(2);
 
+	tmc2130_mode = HOMING_MODE;
     tmc2130_init(HOMING_MODE); // trinamic, homing
     led_blink(3);
 
@@ -121,6 +122,8 @@ void setup()
 
     home();
     // TODO 2: add reading previously stored mode (stealth/normal) from eeprom
+	
+	tmc2130_mode = NORMAL_MODE;
     tmc2130_init(tmc2130_mode); // trinamic, initialize all axes
 
 
