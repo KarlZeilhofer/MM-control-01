@@ -191,10 +191,10 @@ void settings_bowden_length()
 
         } while (buttonClicked() != Btn::middle);
 
-        } while (buttonClicked() != Btn::middle);
-
-        unload_filament_withSensor();
     }
+    while (buttonClicked() != Btn::middle);
+
+    unload_filament_withSensor();
 }
 
 //! @brief Is button pushed?

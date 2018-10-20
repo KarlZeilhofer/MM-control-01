@@ -21,14 +21,12 @@
 extern "C" {
 #endif // defined(__cplusplus)
 
-int8_t tmc2130_init(bool homing);
+int8_t tmc2130_init(uint8_t mode);
 
-extern int8_t tmc2130_init(uint8_t mode);
-
-extern int8_t tmc2130_init_axis(uint8_t axis, uint8_t mode);
-extern int8_t tmc2130_init_axis_current_normal(uint8_t axis, uint8_t current_h, uint8_t current_r);
-extern int8_t tmc2130_init_axis_current_stealth(uint8_t axis, uint8_t current_h, uint8_t current_r);
-extern void tmc2130_disable_axis(uint8_t axis, uint8_t mode);
+int8_t tmc2130_init_axis(uint8_t axis, uint8_t mode);
+int8_t tmc2130_init_axis_current_normal(uint8_t axis, uint8_t current_h, uint8_t current_r);
+int8_t tmc2130_init_axis_current_stealth(uint8_t axis, uint8_t current_h, uint8_t current_r);
+void tmc2130_disable_axis(uint8_t axis, uint8_t mode);
 
 uint16_t tmc2130_read_sg(uint8_t axis);
 
