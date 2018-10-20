@@ -29,7 +29,7 @@ bool feed_filament()
 
     int _c = 0;
     int _delay = 0;
-    engage_filament_pully(true);
+    engage_filament_pulley(true);
 
     set_pulley_dir_push();
     if (tmc2130_mode == NORMAL_MODE) {
@@ -74,7 +74,7 @@ bool feed_filament()
     }
 
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
-    engage_filament_pully(false);
+    engage_filament_pulley(false);
     shr16_set_led(1 << 2 * (4 - active_extruder));
     return true;
 }
@@ -159,12 +159,12 @@ bool select_extruder(int new_extruder)
             if (previous_extruder == EXTRUDERS) {
                 move_selector(-700); // move back from service position
             } else {
-                //engage_filament_pully(true); // TODO 3: remove deprecated
+                //engage_filament_pulley(true); // TODO 3: remove deprecated
                 // why should we engage the filament here?
                 // the idler is moved "synchronously" with the selector anyway!
                 set_positions(previous_extruder,
                               active_extruder); // move idler and selector to new filament position
-                //engage_filament_pully(false); // TODO 3: remove deprecated
+                //engage_filament_pulley(false); // TODO 3: remove deprecated
             }
         }
         _return = true;

@@ -15,7 +15,7 @@ extern int8_t filament_type[EXTRUDERS];
 void home();
 bool home_idler();
 bool home_selector();
-void engage_filament_pully(bool engage);
+void engage_filament_pulley(bool engage);
 
 bool isFilamentInFinda();
 void load_filament_withSensor();
