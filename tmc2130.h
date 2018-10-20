@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include "config.h"
 
-#define TMC2130_SG_THR 4      // SG_THR default
-#define TMC2130_TCOOLTHRS 450 // TCOOLTHRS default
+#define TMC2130_SG_THR         4       // SG_THR default
+#define TMC2130_TCOOLTHRS      450     // TCOOLTHRS default
 
 #define TMC2130_CHECK_SPI 0x01
 #define TMC2130_CHECK_MSC 0x02
@@ -15,7 +15,8 @@
 #define TMC2130_CHECK_STP 0x08
 #define TMC2130_CHECK_DIR 0x10
 #define TMC2130_CHECK_ENA 0x20
-#define TMC2130_CHECK_OK 0x3f
+#define TMC2130_CHECK_OK  0x3f
+
 
 #if defined(__cplusplus)
 extern "C" {
@@ -28,11 +29,12 @@ int8_t tmc2130_init_axis_current_normal(uint8_t axis, uint8_t current_h, uint8_t
 int8_t tmc2130_init_axis_current_stealth(uint8_t axis, uint8_t current_h, uint8_t current_r);
 void tmc2130_disable_axis(uint8_t axis, uint8_t mode);
 
-uint16_t tmc2130_read_sg(uint8_t axis);
 
 #ifdef _DIAG
 uint8_t tmc2130_check_axis(uint8_t axis);
 #endif
+
+uint16_t tmc2130_read_sg(uint8_t axis);
 
 #if defined(__cplusplus)
 }

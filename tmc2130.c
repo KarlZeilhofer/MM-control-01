@@ -6,45 +6,45 @@
 #include <stdio.h>
 #include <avr/pgmspace.h>
 
-#define TMC2130_CS_0 // signal d5  - PC6
-#define TMC2130_CS_1 // signal d6  - PD7
-#define TMC2130_CS_2 // signal d7  - PE6
+#define TMC2130_CS_0 //signal d5  - PC6
+#define TMC2130_CS_1 //signal d6  - PD7
+#define TMC2130_CS_2 //signal d7  - PE6
 
-#define TMC2130_ST_0 // signal d4  - PD4
-#define TMC2130_ST_1 // signal d8  - PB4
-#define TMC2130_ST_2 // signal d12 - PD6
+#define TMC2130_ST_0 //signal d4  - PD4
+#define TMC2130_ST_1 //signal d8  - PB4
+#define TMC2130_ST_2 //signal d12 - PD6
 
-// TMC2130 registers
-#define TMC2130_REG_GCONF 0x00      // 17 bits
-#define TMC2130_REG_GSTAT 0x01      // 3 bits
-#define TMC2130_REG_IOIN 0x04       // 8+8 bits
+//TMC2130 registers
+#define TMC2130_REG_GCONF      0x00 // 17 bits
+#define TMC2130_REG_GSTAT      0x01 // 3 bits
+#define TMC2130_REG_IOIN       0x04 // 8+8 bits
 #define TMC2130_REG_IHOLD_IRUN 0x10 // 5+5+4 bits
 #define TMC2130_REG_TPOWERDOWN 0x11 // 8 bits
-#define TMC2130_REG_TSTEP 0x12      // 20 bits
-#define TMC2130_REG_TPWMTHRS 0x13   // 20 bits
-#define TMC2130_REG_TCOOLTHRS 0x14  // 20 bits
-#define TMC2130_REG_THIGH 0x15      // 20 bits
-#define TMC2130_REG_XDIRECT 0x2d    // 32 bits
-#define TMC2130_REG_VDCMIN 0x33     // 23 bits
-#define TMC2130_REG_MSLUT0 0x60     // 32 bits
-#define TMC2130_REG_MSLUT1 0x61     // 32 bits
-#define TMC2130_REG_MSLUT2 0x62     // 32 bits
-#define TMC2130_REG_MSLUT3 0x63     // 32 bits
-#define TMC2130_REG_MSLUT4 0x64     // 32 bits
-#define TMC2130_REG_MSLUT5 0x65     // 32 bits
-#define TMC2130_REG_MSLUT6 0x66     // 32 bits
-#define TMC2130_REG_MSLUT7 0x67     // 32 bits
-#define TMC2130_REG_MSLUTSEL 0x68   // 32 bits
+#define TMC2130_REG_TSTEP      0x12 // 20 bits
+#define TMC2130_REG_TPWMTHRS   0x13 // 20 bits
+#define TMC2130_REG_TCOOLTHRS  0x14 // 20 bits
+#define TMC2130_REG_THIGH      0x15 // 20 bits
+#define TMC2130_REG_XDIRECT    0x2d // 32 bits
+#define TMC2130_REG_VDCMIN     0x33 // 23 bits
+#define TMC2130_REG_MSLUT0     0x60 // 32 bits
+#define TMC2130_REG_MSLUT1     0x61 // 32 bits
+#define TMC2130_REG_MSLUT2     0x62 // 32 bits
+#define TMC2130_REG_MSLUT3     0x63 // 32 bits
+#define TMC2130_REG_MSLUT4     0x64 // 32 bits
+#define TMC2130_REG_MSLUT5     0x65 // 32 bits
+#define TMC2130_REG_MSLUT6     0x66 // 32 bits
+#define TMC2130_REG_MSLUT7     0x67 // 32 bits
+#define TMC2130_REG_MSLUTSEL   0x68 // 32 bits
 #define TMC2130_REG_MSLUTSTART 0x69 // 8+8 bits
-#define TMC2130_REG_MSCNT 0x6a      // 10 bits
-#define TMC2130_REG_MSCURACT 0x6b   // 9+9 bits
-#define TMC2130_REG_CHOPCONF 0x6c   // 32 bits
-#define TMC2130_REG_COOLCONF 0x6d   // 25 bits
-#define TMC2130_REG_DCCTRL 0x6e     // 24 bits
+#define TMC2130_REG_MSCNT      0x6a // 10 bits
+#define TMC2130_REG_MSCURACT   0x6b // 9+9 bits
+#define TMC2130_REG_CHOPCONF   0x6c // 32 bits
+#define TMC2130_REG_COOLCONF   0x6d // 25 bits
+#define TMC2130_REG_DCCTRL     0x6e // 24 bits
 #define TMC2130_REG_DRV_STATUS 0x6f // 32 bits
-#define TMC2130_REG_PWMCONF 0x70    // 22 bits
-#define TMC2130_REG_PWM_SCALE 0x71  // 8 bits
-#define TMC2130_REG_ENCM_CTRL 0x72  // 2 bits
+#define TMC2130_REG_PWMCONF    0x70 // 22 bits
+#define TMC2130_REG_PWM_SCALE  0x71 // 8 bits
+#define TMC2130_REG_ENCM_CTRL  0x72 // 2 bits
 #define TMC2130_REG_LOST_STEPS 0x73 // 20 bits
 
 #define tmc2130_rd(axis, addr, rval) tmc2130_rx(axis, addr, rval)
@@ -126,8 +126,8 @@ int8_t tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint
     // the current registers allow only values between 0 and 31 (5 bit)
     if (current_r <= 31) {
         uint8_t vsens = 1; // high sensitivity of current measurement
-        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, vsens, 0, 0, 0, mres,
-                                intpol, 0, 0)) {
+        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, rndtf, chm, tbl, 
+                                vsens, 0, 0, 0, mres, intpol, 0, 0)) {
             return -1;
         }
     } else {
@@ -135,8 +135,8 @@ int8_t tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint
         current_r /= 2; // scale current to 0..31
         current_h /= 2; // scale current to 0..31
 
-        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, vsens, 0, 0, 0, mres, intpol, 0,
-                                0)) {
+        if (tmc2130_wr_CHOPCONF(axis, toff, hstrt, hend, fd3, 0, 0, 0, tbl, 
+                                vsens, 0, 0, 0, mres, intpol, 0, 0)) {
             return -1;
         }
     }

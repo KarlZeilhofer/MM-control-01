@@ -189,12 +189,11 @@ void settings_bowden_length()
             shr16_set_led(2 << 2 * 1);
             delay(50);
 
+
         } while (buttonClicked() != Btn::middle);
 
+        unload_filament_withSensor();
     }
-    while (buttonClicked() != Btn::middle);
-
-    unload_filament_withSensor();
 }
 
 //! @brief Is button pushed?
@@ -216,3 +215,4 @@ Btn buttonClicked()
 
     return Btn::none;
 }
+

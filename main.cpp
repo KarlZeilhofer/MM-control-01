@@ -260,6 +260,22 @@ extern "C" {
                     delay(200);
                     fprintf_P(inout, PSTR("ok\n"));
                 }
+            } else if (sscanf_P(line, PSTR("M%d"), &value) > 0) {
+                // M0: set to normal mode; M1: set to stealth mode
+                switch (value) {
+                case 0:
+                    tmc2130_mode = NORMAL_MODE;
+                    break;
+                case 1:
+                    tmc2130_mode = STEALTH_MODE;
+                    break;
+                default:
+                    return;
+                }
+
+                //init all axes
+                tmc2130_init(tmc2130_mode);
+                fprintf_P(inout, PSTR("ok\n"));
             } else if (sscanf_P(line, PSTR("U%d"), &value) > 0) {
                 // Unload filament
                 unload_filament_withSensor();

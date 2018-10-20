@@ -34,7 +34,9 @@ static const int BOWDEN_LENGTH = 1000;
 static const int EJECT_PULLEY_STEPS = 2500;
 
 // private variables:
+
 static int selector_steps_for_eject = 0;
+
 static int idler_steps_for_eject = 0;
 
 // private functions:
@@ -75,8 +77,7 @@ void eject_filament(int extruder)
     }
 
 
-    engage_filament_pully(
-        true); // if idler is in parked position un-park him get in contact with filament
+    engage_filament_pully(true); 
     tmc2130_init_axis(AX_PUL, tmc2130_mode);
 
 
@@ -102,7 +103,7 @@ void eject_filament(int extruder)
     move_selector(selector_steps_for_eject);
 
     // push filament forward
-    move_pulley(EJECT_PULLEY_STEPS);
+    move_pulley(EJECT_PULLEY_STEPS, 666);
 
     // unpark idler so user can easily remove filament
     engage_filament_pully(false);
@@ -123,7 +124,7 @@ void recover_after_eject()
     move_idler(-idler_steps_for_eject); // TODO 1: remove this, when abs coordinates are implemented!
     move_selector(-selector_steps_for_eject);
 
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
 }
 
 void load_filament_withSensor()
