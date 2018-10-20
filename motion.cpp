@@ -54,7 +54,7 @@ void set_positions(int _current_extruder, int _next_extruder)
     int _idler_steps = (_current_extruder - _next_extruder) * IDLER_STEPS;
 
     // move both to new position
-    move_idler(_idler_steps); // remove this, with when abs coordinates are implemented!
+    move_idler(_idler_steps); // remove this, when abs coordinates are implemented!
     move_selector(_selector_steps);
 }
 
@@ -664,6 +664,14 @@ void move_idler(int steps, uint16_t speed)
  */
 void move_selector(int steps, uint16_t speed)
 {
+	if(speed > MAX_SPEED_SEL){
+		speed = MAX_SPEED_SEL;
+	}
+    if (tmc2130_mode == STEALTH_MODE) {
+        if (speed > MAX_SPEED_STEALTH_SEL) {
+            speed = MAX_SPEED_STEALTH_SEL;
+        }
+    }
     if (isFilamentInFinda() == false) {
         moveSmooth(AX_SEL, steps, speed);
     }
@@ -896,6 +904,10 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed,
 {
     MotReturn ret = MR_Success;
 
+    if (tmc2130_mode == STEALTH_MODE) {
+        withStallDetection = false;
+    }
+
     shr16_set_led(0);
     enum State {
         Accelerate = 0,
@@ -904,7 +916,10 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed,
     };
 
     float vMax = speed;
-    float acc = 50000; // Note: tested selector successfully with 100k
+    float acc = ACC_NORMAL; // Note: tested selector successfully with 100k
+	if (tmc2130_mode == STEALTH_MODE) {
+        acc = ACC_STEALTH;
+    }
     float v0 = 200; // steps/s, minimum speed
     float v = v0; // current speed
     int accSteps = 0; // number of steps for acceleration

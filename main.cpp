@@ -91,6 +91,7 @@ void setup()
     spi_init();
     led_blink(2);
 
+	tmc2130_mode = HOMING_MODE;
     tmc2130_init(HOMING_MODE); // trinamic, homing
     led_blink(3);
 
@@ -120,7 +121,9 @@ void setup()
     }
 
     home();
-    //add reading previously stored mode (stealth/normal) from eeprom
+    // TODO 2: add reading previously stored mode (stealth/normal) from eeprom
+	
+	tmc2130_mode = NORMAL_MODE;
     tmc2130_init(tmc2130_mode); // trinamic, initialize all axes
 
 
@@ -159,7 +162,7 @@ void manual_extruder_selector()
 {
     shr16_set_led(1 << 2 * (4 - active_extruder));
 
-    if ((Btn::left | Btn::right) & buttonClicked()) {
+    if (buttonClicked() != Btn::none) {
         switch (buttonClicked()) {
         case Btn::right:
             if (active_extruder < EXTRUDERS) {
@@ -170,6 +173,23 @@ void manual_extruder_selector()
             if (active_extruder > 0) {
                 select_extruder(active_extruder - 1);
             }
+            break;
+        case Btn::middle:
+            if (tmc2130_mode == STEALTH_MODE) {
+                tmc2130_mode = NORMAL_MODE;
+            } else if (tmc2130_mode == NORMAL_MODE) {
+                tmc2130_mode = STEALTH_MODE;
+            }
+            if (tmc2130_init_axis(AX_IDL, tmc2130_mode)) {
+                fault_handler(FAULT_IDLER_INIT_2);
+            }
+            if (tmc2130_init_axis(AX_SEL, tmc2130_mode)) {
+                fault_handler(FAULT_SELECTOR_INIT_2);
+            }
+            if (tmc2130_init_axis(AX_PUL, tmc2130_mode)) {
+                fault_handler(FAULT_PULLEY_INIT_2);
+            }
+            delay(200);
             break;
         default:
             break;
@@ -205,12 +225,12 @@ void loop()
 
     if (!isPrinting) {
         manual_extruder_selector();
-        if (Btn::middle == buttonClicked() && active_extruder < 5) {
-            shr16_set_led(2 << 2 * (4 - active_extruder));
-            if (Btn::middle == buttonClicked()) {
-                feed_filament();
-            }
-        }
+        //        if (Btn::middle == buttonClicked() && active_extruder < 5) {
+        //            shr16_set_led(2 << 2 * (4 - active_extruder));
+        //            if (Btn::middle == buttonClicked()) {
+        //                feed_filament();
+        //            }
+        //        }
     }
 #endif
 }
@@ -377,3 +397,13 @@ void testing_loop()
     delay(10); // delay for counting up the speed and switch debouncing
 }
 #endif
+
+void fault_handler(Fault id)
+{
+    while (1) {
+        shr16_set_led(id + 1);
+        delay(1000);
+        shr16_set_led(0);
+        delay(2000);
+    }
+}
