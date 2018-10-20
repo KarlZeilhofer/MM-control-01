@@ -9,12 +9,8 @@
 #include "tmc2130.h"
 #include "main.h"
 
-<<<<<<<
-int8_t cmd_uart_bridge(FILE *inout)
-=======
 
 int8_t cmd_uart_bridge(FILE *inout)
->>>>>>>
 {
     fprintf_P(inout, PSTR("UART bridge started, press any button to stop\n"));
     int c0;
@@ -41,51 +37,6 @@ int8_t cmd_uart_bridge(FILE *inout)
 
 int8_t cmd_diag_uart1(FILE *inout)
 {
-<<<<<<<
-    if (inout == uart1io) {
-        return -1;
-    }
-    fprintf_P(inout, PSTR("UART1 diag\n"));
-    fprintf_P(inout, PSTR("connect loopback jumper and press enter..\n"));
-    fflush(inout);
-    while (getc(inout) >= 0)
-        ; // clear rx buffer
-    int c = 0;
-    while (((c = (char)getc(inout)) != '\n') && (c != '\r')) {
-        process_signals();    // wait enter
-    }
-    fflush(uart0io);
-    while (getc(uart1io) >= 0)
-        ; // clear rx buffer uart1
-    uint16_t err_tmo = 0;
-    uint16_t err_chr = 0;
-    for (c = 0; c < 256; c++) {
-        putc(c, uart1io); // send char
-        uint8_t tmo = 100; // timeout
-        int cr = 0; // received char
-        while (((cr = getc(uart1io)) < 0) && (tmo--)) {
-            process_signals();    // wait char
-        }
-        if (cr == c) { // char equal = OK
-            fprintf_P(inout, PSTR(" 0x%02x OK\n"), c);
-        } else if (cr < 0) { // timeout = NG
-            fprintf_P(inout, PSTR(" 0x%02x NG! timeout\n"), c);
-            err_tmo++;
-        } else { // char not equal = NG
-            fprintf_P(inout, PSTR(" 0x%02x NG! received 0x%02x\n"), c, cr);
-            err_chr++;
-        }
-    }
-    if ((err_tmo == 0) && (err_chr == 0)) {
-        fprintf_P(inout, PSTR("SUCCED\n"));
-    } else {
-        fprintf_P(inout, PSTR("ok=%d\n"), 256 - (err_chr + err_tmo));
-        fprintf_P(inout, PSTR("ne=%d\n"), err_chr);
-        fprintf_P(inout, PSTR("to=%d\n"), err_tmo);
-        fprintf_P(inout, PSTR("FAILED\n"));
-    }
-    return 0;
-=======
     if (inout == uart1io) {
         return -1;
     }
@@ -127,7 +78,6 @@ int8_t cmd_diag_uart1(FILE *inout)
         fprintf_P(inout, PSTR("FAILED\n"));
     }
     return 0;
->>>>>>>
 }
 
 int8_t cmd_diag_tmc(FILE *inout, uint8_t axis)
