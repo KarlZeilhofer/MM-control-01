@@ -664,9 +664,9 @@ void move_idler(int steps, uint16_t speed)
  */
 void move_selector(int steps, uint16_t speed)
 {
-	if(speed > MAX_SPEED_SEL){
-		speed = MAX_SPEED_SEL;
-	}
+    if (speed > MAX_SPEED_SEL) {
+        speed = MAX_SPEED_SEL;
+    }
     if (tmc2130_mode == STEALTH_MODE) {
         if (speed > MAX_SPEED_STEALTH_SEL) {
             speed = MAX_SPEED_STEALTH_SEL;
@@ -917,7 +917,7 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed,
 
     float vMax = speed;
     float acc = ACC_NORMAL; // Note: tested selector successfully with 100k
-	if (tmc2130_mode == STEALTH_MODE) {
+    if (tmc2130_mode == STEALTH_MODE) {
         acc = ACC_STEALTH;
     }
     float v0 = 200; // steps/s, minimum speed

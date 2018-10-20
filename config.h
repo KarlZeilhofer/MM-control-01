@@ -162,4 +162,4 @@
 
 // testing motion controller
 #define TESTING
-
+//#define TESTING_STEALTH

@@ -91,7 +91,7 @@ void setup()
     spi_init();
     led_blink(2);
 
-	tmc2130_mode = HOMING_MODE;
+    tmc2130_mode = HOMING_MODE;
     tmc2130_init(HOMING_MODE); // trinamic, homing
     led_blink(3);
 
@@ -122,8 +122,8 @@ void setup()
 
     home();
     // TODO 2: add reading previously stored mode (stealth/normal) from eeprom
-	
-	tmc2130_mode = NORMAL_MODE;
+
+    tmc2130_mode = NORMAL_MODE;
     tmc2130_init(tmc2130_mode); // trinamic, initialize all axes
 
 
@@ -162,6 +162,7 @@ void manual_extruder_selector()
 {
     shr16_set_led(1 << 2 * (4 - active_extruder));
 
+#ifdef TESTING_STEALTH
     if (buttonClicked() != Btn::none) {
         switch (buttonClicked()) {
         case Btn::right:
@@ -195,6 +196,24 @@ void manual_extruder_selector()
             break;
         }
     }
+#else
+    if ((Btn::left | Btn::right) & buttonClicked()) {
+        switch (buttonClicked()) {
+        case Btn::right:
+            if (active_extruder < EXTRUDERS) {
+                select_extruder(active_extruder + 1);
+            }
+            break;
+        case Btn::left:
+            if (active_extruder > 0) {
+                select_extruder(active_extruder - 1);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+#endif
 
     if (active_extruder == 5) {
         shr16_set_led(2 << 2 * 0);
@@ -225,12 +244,14 @@ void loop()
 
     if (!isPrinting) {
         manual_extruder_selector();
-        //        if (Btn::middle == buttonClicked() && active_extruder < 5) {
-        //            shr16_set_led(2 << 2 * (4 - active_extruder));
-        //            if (Btn::middle == buttonClicked()) {
-        //                feed_filament();
-        //            }
-        //        }
+#ifndef TESTING_STEALTH
+        if (Btn::middle == buttonClicked() && active_extruder < 5) {
+            shr16_set_led(2 << 2 * (4 - active_extruder));
+            if (Btn::middle == buttonClicked()) {
+                feed_filament();
+            }
+        }
+#endif
     }
 #endif
 }
