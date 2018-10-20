@@ -9,7 +9,7 @@
 extern void home();
 extern bool home_idler();
 extern bool home_selector();
- 
+
 extern int8_t filament_type[EXTRUDERS];
 
 

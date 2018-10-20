@@ -13,3 +13,7 @@
 /main.cpp~RFdf1346e.TMP
 /__vm/.MM-control-01.vsarduino.h
 Doc
+
+\.pioenvs/
+
+platformio\.pro\.user
