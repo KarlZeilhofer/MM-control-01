@@ -13,13 +13,6 @@
 // public variables:
 int8_t filament_type[EXTRUDERS] = { -1, -1, -1, -1, -1};
 
-<<<<<<<
-
-=======
-const int selector_steps = 2790 / 4;
-const int idler_steps = 1420 / 4;    // 2 msteps = 180 / 4
-const int idler_parking_steps = (idler_steps / 2) + 40;  // 40
->>>>>>>
 
 // private constants:
 // selector homes on the right end. afterwards it is moved to extruder 0
@@ -53,24 +46,13 @@ bool checkOk();
 
 void set_positions(int _current_extruder, int _next_extruder)
 {
-<<<<<<<
     // steps to move to new position of idler and selector
     int _selector_steps = ((_current_extruder - _next_extruder) * SELECTOR_STEPS) * -1;
     int _idler_steps = (_current_extruder - _next_extruder) * IDLER_STEPS;
-=======
-    // steps to move to new position of idler and selector
-    int _selector_steps = ((_current_extruder - _next_extruder) * selector_steps) * -1;
-    int _idler_steps = (_current_extruder - _next_extruder) * idler_steps;
->>>>>>>
 
-<<<<<<<
     // move both to new position
     move_idler(_idler_steps); // remove this, with when abs coordinates are implemented!
     move_selector(_selector_steps);
-=======
-    // move both to new position
-    move_proportional(_idler_steps, _selector_steps);
->>>>>>>
 }
 
 /**
@@ -81,51 +63,23 @@ void set_positions(int _current_extruder, int _next_extruder)
  */
 void eject_filament(int extruder)
 {
-<<<<<<<
-    int selector_position = 0;
-=======
-    //move selector sideways and push filament forward little bit, so user can catch it, unpark idler at the end to user can pull filament out
-    int selector_position = 0;
-    int steps = 0;
->>>>>>>
 
-<<<<<<<
+    int selector_position = 0;
+
+
     int8_t selector_offset_for_eject = 0;
     int8_t idler_offset_for_eject = 0;
-=======
-
->>>>>>>
-
-<<<<<<<
     // if there is still filament detected by PINDA unload it first
     if (isFilamentLoaded) {
         unload_filament_withSensor();
     }
-=======
-    int8_t selector_offset_for_eject = 0;
-    int8_t idler_offset_for_eject = 0;
->>>>>>>
 
-<<<<<<<
 
-=======
-    //if there is still filament detected by PINDA unload it first
-    if (isFilamentLoaded) {
-        unload_filament_withSensor();
-    }
->>>>>>>
-
-<<<<<<<
     engage_filament_pully(
         true); // if idler is in parked position un-park him get in contact with filament
-    tmc2130_init_axis_current(AX_PUL, 1, 30);
-=======
-    if (isIdlerParked) {
-        park_idler(true);    // if idler is in parked position un-park him get in contact with filament
-    }
->>>>>>>
 
-<<<<<<<
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+
     // if we are want to eject fil 0-2, move seelctor to position 4 (right), if we want to eject filament 3 - 4, move
     // selector to position 0 (left)
     // maybe we can also move selector to service position in the future?
@@ -134,25 +88,10 @@ void eject_filament(int extruder)
     } else {
         selector_position = 0;
     }
-=======
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
->>>>>>>
-
-<<<<<<<
     // count offset (number of positions) for desired selector and idler position for ejecting
     selector_offset_for_eject = active_extruder - selector_position;
     idler_offset_for_eject = active_extruder - extruder;
-=======
-    //if we are want to eject fil 0-2, move seelctor to position 4 (right), if we want to eject filament 3 - 4, move selector to position 0 (left)
-    //maybe we can also move selector to service position in the future?
-    if (extruder <= 2) {
-        selector_position = 4;
-    } else {
-        selector_position = 0;
-    }
->>>>>>>
 
-<<<<<<<
     // count number of desired steps for selector and idler and store it in static variable
     selector_steps_for_eject = (selector_offset_for_eject * SELECTOR_STEPS) * -1;
     idler_steps_for_eject = idler_offset_for_eject * IDLER_STEPS;
@@ -167,34 +106,12 @@ void eject_filament(int extruder)
     // unpark idler so user can easily remove filament
     engage_filament_pully(false);
     tmc2130_init_axis_current(AX_PUL, 0, 0);
-=======
-    //count offset (number of positions) for desired selector and idler position for ejecting
-    selector_offset_for_eject = active_extruder - selector_position;
-    idler_offset_for_eject = active_extruder - extruder;
 
-    //count number of desired steps for selector and idler and store it in static variable
-    selector_steps_for_eject = (selector_offset_for_eject * selector_steps) * -1;
-    idler_steps_for_eject = idler_offset_for_eject * idler_steps;
-
-    //move selector and idler to new position
-    move_proportional(idler_steps_for_eject, selector_steps_for_eject);
-
-    //push filament forward
-    do {
-        do_pulley_step();
-        steps++;
-        delayMicroseconds(1500);
-    } while (steps < 2500);
-
-    //unpark idler so user can easily remove filament
-    park_idler(false);
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
->>>>>>>
 }
 
 void recover_after_eject()
 {
-<<<<<<<
     // restore state before eject filament
     tmc2130_init_axis_current(AX_PUL, 1, 30);
 
@@ -207,38 +124,21 @@ void recover_after_eject()
     move_selector(-selector_steps_for_eject);
 
     tmc2130_init_axis_current(AX_PUL, 0, 0);
-=======
-    //restore state before eject filament
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
-    move_proportional(-idler_steps_for_eject, -selector_steps_for_eject);
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
->>>>>>>
 }
 
 void load_filament_withSensor()
 {
-<<<<<<<
 
-=======
-    if (isIdlerParked) {
-        park_idler(true);    // if idler is in parked position un-park him get in contact with filament
-    }
->>>>>>>
-
-<<<<<<<
     engage_filament_pully(
         true); // if idler is in parked position un-park him get in contact with filament
-    tmc2130_init_axis_current(AX_PUL, 1, 30);
-=======
+
     tmc2130_init_axis(AX_PUL, tmc2130_mode);
->>>>>>>
 
     set_pulley_dir_push();
 
     int _loadSteps = 0;
     int _endstop_hit = 0;
 
-<<<<<<<
     // load filament until FINDA senses end of the filament, means correctly loaded into the selector
     // we can expect something like 570 steps to get in sensor
     do {
@@ -246,17 +146,9 @@ void load_filament_withSensor()
         _loadSteps++;
         delayMicroseconds(5500);
     } while (isFilamentInFinda() == false && _loadSteps < 1500);
-=======
-    // load filament until FINDA senses end of the filament, means correctly loaded into the selector
-    // we can expect something like 570 steps to get in sensor
-    do {
-        do_pulley_step();
-        _loadSteps++;
-        delayMicroseconds(5500);
-    } while (digitalRead(A1) == 0 && _loadSteps < 1500);
->>>>>>>
 
-<<<<<<<
+
+
     // filament did not arrived at FINDA, let's try to correct that
     if (isFilamentInFinda() == false) {
         for (int i = 6; i > 0; i--) {
@@ -267,11 +159,7 @@ void load_filament_withSensor()
                     do_pulley_step();
                     delayMicroseconds(1500);
                 }
-=======
 
->>>>>>>
-
-<<<<<<<
                 set_pulley_dir_push();
                 _loadSteps = 0;
                 do {
@@ -285,41 +173,12 @@ void load_filament_withSensor()
             }
         }
     }
-=======
-    // filament did not arrived at FINDA, let's try to correct that
-    if (digitalRead(A1) == 0) {
-        for (int i = 6; i > 0; i--) {
-            if (digitalRead(A1) == 0) {
-                // attempt to correct
-                set_pulley_dir_pull();
-                for (int i = 200; i >= 0; i--) {
-                    do_pulley_step();
-                    delayMicroseconds(1500);
-                }
->>>>>>>
 
-<<<<<<<
     // still not at FINDA, error on loading, let's wait for user input
     if (isFilamentInFinda() == false) {
         bool _continue = false;
         bool _isOk = false;
-=======
-                set_pulley_dir_push();
-                _loadSteps = 0;
-                do {
-                    do_pulley_step();
-                    _loadSteps++;
-                    delayMicroseconds(4000);
-                    if (digitalRead(A1) == 1) {
-                        _endstop_hit++;
-                    }
-                } while (_endstop_hit < 100 && _loadSteps < 500);
-            }
-        }
-    }
->>>>>>>
 
-<<<<<<<
         engage_filament_pully(false);
         do {
             shr16_set_led(0x000);
@@ -333,12 +192,6 @@ void load_filament_withSensor()
                 delay(100);
             }
             delay(800);
-=======
-    // still not at FINDA, error on loading, let's wait for user input
-    if (digitalRead(A1) == 0) {
-        bool _continue = false;
-        bool _isOk = false;
->>>>>>>
 
             switch (buttonClicked()) {
             case Btn::left:
@@ -346,7 +199,6 @@ void load_filament_withSensor()
                 engage_filament_pully(true);
                 set_pulley_dir_push();
 
-<<<<<<<
                 for (int i = 0; i < 200; i++) {
                     do_pulley_step();
                     delayMicroseconds(5500);
@@ -364,11 +216,6 @@ void load_filament_withSensor()
                 engage_filament_pully(true);
                 _isOk = checkOk();
                 engage_filament_pully(false);
-=======
-
->>>>>>>
-
-<<<<<<<
                 if (_isOk) { // there is no filament in finda any more, great!
                     _continue = true;
                 }
@@ -376,33 +223,9 @@ void load_filament_withSensor()
             default:
                 break;
             }
-=======
-        park_idler(false);
-        do {
-            shr16_set_led(0x000);
-            delay(800);
-            if (!_isOk) {
-                shr16_set_led(2 << 2 * (4 - active_extruder));
-            } else {
-                shr16_set_led(1 << 2 * (4 - active_extruder));
-                delay(100);
-                shr16_set_led(2 << 2 * (4 - active_extruder));
-                delay(100);
-            }
-            delay(800);
->>>>>>>
 
-<<<<<<<
         } while (!_continue);
-=======
-            switch (buttonClicked()) {
-            case Btn::left:
-                // just move filament little bit
-                park_idler(true);
-                set_pulley_dir_push();
->>>>>>>
 
-<<<<<<<
         engage_filament_pully(true);
         // TODO: do not repeat same code, try to do it until succesfull load
         _loadSteps = 0;
@@ -411,84 +234,6 @@ void load_filament_withSensor()
             _loadSteps++;
             delayMicroseconds(5500);
         } while (isFilamentInFinda() == false && _loadSteps < 1500);
-        // ?
-    } else {
-        // nothing
-    }
-=======
-                for (int i = 0; i < 200; i++) {
-                    do_pulley_step();
-                    delayMicroseconds(5500);
-                }
-                park_idler(false);
-                break;
-            case Btn::middle:
-                // check if everything is ok
-                park_idler(true);
-                _isOk = checkOk();
-                park_idler(false);
-                break;
-            case Btn::right:
-                // continue with loading
-                park_idler(true);
-                _isOk = checkOk();
-                park_idler(false);
->>>>>>>
-
-<<<<<<<
-    {
-        float _speed = 4500;
-        const uint16_t steps = BowdenLength::get();
-=======
-                if (_isOk) { //pridat do podminky flag ze od tiskarny prislo continue
-                    _continue = true;
-                }
-                break;
-            default:
-                break;
-            }
->>>>>>>
-
-<<<<<<<
-        for (uint16_t i = 0; i < steps; i++) {
-            do_pulley_step();
-=======
-        } while ( !_continue );
->>>>>>>
-
-<<<<<<<
-            if (i > 10 && i < 4000 && _speed > 650) {
-                _speed = _speed - 4;
-            }
-            if (i > 100 && i < 4000 && _speed > 650) {
-                _speed = _speed - 1;
-            }
-            if (i > 8000 && _speed < 3000) {
-                _speed = _speed + 2;
-            }
-            delayMicroseconds(_speed);
-        }
-    }
-=======
-
->>>>>>>
-
-<<<<<<<
-    tmc2130_init_axis_current(AX_PUL, 0, 0);
-    isFilamentLoaded = true; // filament loaded
-=======
-
-
-
-
-        park_idler(true);
-        // TODO: do not repeat same code, try to do it until succesfull load
-        _loadSteps = 0;
-        do {
-            do_pulley_step();
-            _loadSteps++;
-            delayMicroseconds(5500);
-        } while (digitalRead(A1) == 0 && _loadSteps < 1500);
         // ?
     } else {
         // nothing
@@ -516,7 +261,6 @@ void load_filament_withSensor()
 
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
     isFilamentLoaded = true;  // filament loaded
->>>>>>>
 }
 
 /**
