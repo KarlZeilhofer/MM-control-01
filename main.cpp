@@ -88,10 +88,10 @@ void setup()
     bool requestMenu = false;
     fprintf_P(uart_com, PSTR("start\n")); //startup message
 
-	spi_init();
+    spi_init();
     led_blink(2);
 
-	tmc2130_init(HOMING_MODE); // trinamic, homing
+    tmc2130_init(HOMING_MODE); // trinamic, homing
     led_blink(3);
 
 
@@ -212,11 +212,10 @@ void loop()
             }
         }
     }
+#endif
 }
 
 extern "C" {
-
-
     void process_commands(FILE *inout)
     {
         static char line[32];
@@ -318,9 +317,11 @@ extern "C" {
                 default:
                     return;
                 }
-			} else { 
-				// nothing received
-			}
+            } else {
+                // nothing received
+            }
+        }
+    }
 } // extern C
 
 void process_signals()

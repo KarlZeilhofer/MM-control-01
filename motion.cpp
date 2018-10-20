@@ -9,6 +9,7 @@
 #include "mmctl.h"
 #include "Buttons.h"
 #include "permanent_storage.h"
+#include "config.h"
 
 // public variables:
 int8_t filament_type[EXTRUDERS] = { -1, -1, -1, -1, -1};
@@ -76,7 +77,8 @@ void eject_filament(int extruder)
 
     engage_filament_pully(
         true); // if idler is in parked position un-park him get in contact with filament
-    tmc2130_init_axis_current(AX_PUL, 1, 30);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+
 
     // if we are want to eject fil 0-2, move seelctor to position 4 (right), if we want to eject filament 3 - 4, move
     // selector to position 0 (left)
@@ -104,13 +106,14 @@ void eject_filament(int extruder)
 
     // unpark idler so user can easily remove filament
     engage_filament_pully(false);
-    tmc2130_init_axis_current(AX_PUL, 0, 0);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
 }
 
 void recover_after_eject()
 {
     // restore state before eject filament
-    tmc2130_init_axis_current(AX_PUL, 1, 30);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+
 
     // pull back filament
     engage_filament_pully(true);
@@ -120,7 +123,7 @@ void recover_after_eject()
     move_idler(-idler_steps_for_eject); // TODO 1: remove this, when abs coordinates are implemented!
     move_selector(-selector_steps_for_eject);
 
-    tmc2130_init_axis_current(AX_PUL, 0, 0);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
 }
 
 void load_filament_withSensor()
@@ -128,7 +131,8 @@ void load_filament_withSensor()
 
     engage_filament_pully(
         true); // if idler is in parked position un-park him get in contact with filament
-    tmc2130_init_axis_current(AX_PUL, 1, 30);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+
 
     set_pulley_dir_push();
 
@@ -254,7 +258,8 @@ void load_filament_withSensor()
         }
     }
 
-    tmc2130_init_axis_current(AX_PUL, 0, 0);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+ 
     isFilamentLoaded = true; // filament loaded
 }
 
@@ -264,7 +269,8 @@ void load_filament_withSensor()
  */
 void unload_filament_withSensor()
 {
-    tmc2130_init_axis_current(AX_PUL, 1, 30);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+
 
 
     engage_filament_pully(
@@ -397,7 +403,8 @@ void unload_filament_withSensor()
         }
     }
     engage_filament_pully(false);
-    tmc2130_init_axis_current(AX_PUL, 0, 0);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+ 
     isFilamentLoaded = false; // filament unloaded
 }
 
@@ -416,17 +423,31 @@ void load_filament_intoExtruder()
     set_pulley_dir_push();
 
     // PLA
-    tmc2130_init_axis_current(AX_PUL, 1, 15);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
     move_pulley(150, 384);
 
-    tmc2130_init_axis_current(AX_PUL, 1, 10);
+
+    if (tmc2130_mode == NORMAL_MODE) {
+        tmc2130_init_axis_current_normal(AX_PUL, current_holding_normal[AX_PUL],
+                                         current_running_normal[AX_PUL] - (current_running_normal[AX_PUL] / 4) );
+    } else {
+        tmc2130_init_axis_current_stealth(AX_PUL, current_holding_stealth[AX_PUL],
+                                          current_running_stealth[AX_PUL] - (current_running_stealth[AX_PUL] / 4) );
+    }
     move_pulley(170, 384);
 
-    tmc2130_init_axis_current(AX_PUL, 1, 3);
+    if (tmc2130_mode == NORMAL_MODE) {
+        tmc2130_init_axis_current_normal(AX_PUL, current_holding_normal[AX_PUL],
+                                         current_running_normal[AX_PUL] / 4);
+    } else {
+        tmc2130_init_axis_current_stealth(AX_PUL, current_holding_stealth[AX_PUL],
+                                          current_running_stealth[AX_PUL] / 4);
+    }
     move_pulley(450, 454);
 
     engage_filament_pully(false);
-    tmc2130_init_axis_current(AX_PUL, 0, 0);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+ 
 }
 
 void init_Pulley()

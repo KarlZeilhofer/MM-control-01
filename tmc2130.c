@@ -296,9 +296,9 @@ int8_t tmc2130_init(uint8_t mode)
     PIN_STP_IDL_LOW;
 
     int8_t ret = 0;
-    ret += tmc2130_init_axis(AX_PUL, homing) ? -1 : 0;
-    ret += tmc2130_init_axis(AX_SEL, homing) ? -2 : 0;
-    ret += tmc2130_init_axis(AX_IDL, homing) ? -4 : 0;
+    ret += tmc2130_init_axis(AX_PUL, mode) ? -1 : 0;
+    ret += tmc2130_init_axis(AX_SEL, mode) ? -2 : 0;
+    ret += tmc2130_init_axis(AX_IDL, mode) ? -4 : 0;
 
     return ret;
 }
