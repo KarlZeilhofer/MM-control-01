@@ -58,7 +58,6 @@ int8_t tmc2130_wr_CHOPCONF(uint8_t axis, uint8_t toff, uint8_t hstrt, uint8_t he
                            uint8_t disfdcc, uint8_t rndtf, uint8_t chm, uint8_t tbl, uint8_t vsense, uint8_t vhighfs,
                            uint8_t vhighchm, uint8_t sync, uint8_t mres, uint8_t intpol, uint8_t dedge, uint8_t diss2g)
 {
-<<<<<<<
     uint32_t val = 0;
     val |= (uint32_t)(toff & 15);
     val |= (uint32_t)(hstrt & 7) << 4;
@@ -82,31 +81,6 @@ int8_t tmc2130_wr_CHOPCONF(uint8_t axis, uint8_t toff, uint8_t hstrt, uint8_t he
     // printf_P(PSTR("tmc2130_wr_CHOPCONF out=0x%08lx in=0x%08lx\n"), val, valr);
     // return (val == valr)?0:-1;
     return 0;
-=======
-    uint32_t val = 0;
-    val |= (uint32_t)(toff & 15);
-    val |= (uint32_t)(hstrt & 7) << 4;
-    val |= (uint32_t)(hend & 15) << 7;
-    val |= (uint32_t)(fd3 & 1) << 11;
-    val |= (uint32_t)(disfdcc & 1) << 12;
-    val |= (uint32_t)(rndtf & 1) << 13;
-    val |= (uint32_t)(chm & 1) << 14;
-    val |= (uint32_t)(tbl & 3) << 15;
-    val |= (uint32_t)(vsense & 1) << 17;
-    val |= (uint32_t)(vhighfs & 1) << 18;
-    val |= (uint32_t)(vhighchm & 1) << 19;
-    val |= (uint32_t)(sync & 15) << 20;
-    val |= (uint32_t)(mres & 15) << 24;
-    val |= (uint32_t)(intpol & 1) << 28;
-    val |= (uint32_t)(dedge & 1) << 29;
-    val |= (uint32_t)(diss2g & 1) << 30;
-    tmc2130_wr(axis, TMC2130_REG_CHOPCONF, val);
-    //uint32_t valr = 0;
-    //tmc2130_rd(axis, TMC2130_REG_CHOPCONF, &valr);
-    //printf_P(PSTR("tmc2130_wr_CHOPCONF out=0x%08lx in=0x%08lx\n"), val, valr);
-    //return (val == valr)?0:-1;
-    return 0;
->>>>>>>
 }
 
 void tmc2130_wr_PWMCONF(uint8_t axis, uint8_t pwm_ampl, uint8_t pwm_grad, uint8_t pwm_freq,
