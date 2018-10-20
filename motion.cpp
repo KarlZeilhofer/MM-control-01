@@ -415,8 +415,11 @@ void unload_filament_withSensor()
  * pulley gears so they can grab them.
  * We reduce here stepwise the motor current, to prevent grinding into the
  * filament as good as possible.
+ *
+ * TODO 1: this procedure is most important for high reliability.
+ * The speed must be set accordingly to the settings in the slicer
  */
-void load_filament_intoExtruder()
+void load_filament_into_extruder()
 {
     uint8_t current_running_normal[3] = CURRENT_RUNNING_NORMAL;
     uint8_t current_running_stealth[3] = CURRENT_RUNNING_STEALTH;
@@ -427,11 +430,16 @@ void load_filament_intoExtruder()
         true); // if idler is in parked position un-park him get in contact with filament
     set_pulley_dir_push();
 
+
+#ifdef TESTING
     // PLA
+
+    // set current to 100%
     tmc2130_init_axis(AX_PUL, tmc2130_mode);
-    move_pulley(150, 384);
+    move_pulley(151, 385);
 
 
+    // set current to 75%
     if (tmc2130_mode == NORMAL_MODE) {
         tmc2130_init_axis_current_normal(AX_PUL, current_holding_normal[AX_PUL],
                                          current_running_normal[AX_PUL] - (current_running_normal[AX_PUL] / 4) );
@@ -439,8 +447,9 @@ void load_filament_intoExtruder()
         tmc2130_init_axis_current_stealth(AX_PUL, current_holding_stealth[AX_PUL],
                                           current_running_stealth[AX_PUL] - (current_running_stealth[AX_PUL] / 4) );
     }
-    move_pulley(170, 384);
+    move_pulley(170, 385);
 
+    // set current to 25%
     if (tmc2130_mode == NORMAL_MODE) {
         tmc2130_init_axis_current_normal(AX_PUL, current_holding_normal[AX_PUL],
                                          current_running_normal[AX_PUL] / 4);
@@ -448,7 +457,40 @@ void load_filament_intoExtruder()
         tmc2130_init_axis_current_stealth(AX_PUL, current_holding_stealth[AX_PUL],
                                           current_running_stealth[AX_PUL] / 4);
     }
-    move_pulley(450, 454);
+    move_pulley(451, 455);
+#else
+    //PLA
+    // 321 µSteps @ 385 µSteps/s
+    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    for (int i = 0; i <= 320; i++) {
+        if (i == 150) {
+            if (tmc2130_mode == NORMAL_MODE) {
+                tmc2130_init_axis_current_normal(AX_PUL, current_holding_normal[AX_PUL],
+                                                 current_running_normal[AX_PUL] - (current_running_normal[AX_PUL] / 4) );
+            } else {
+                tmc2130_init_axis_current_stealth(AX_PUL, current_holding_stealth[AX_PUL],
+                                                  current_running_stealth[AX_PUL] - (current_running_stealth[AX_PUL] / 4) );
+            }
+        }
+        do_pulley_step();
+        delayMicroseconds(2600);
+    }
+
+    //PLA
+    if (tmc2130_mode == NORMAL_MODE) {
+        tmc2130_init_axis_current_normal(AX_PUL, current_holding_normal[AX_PUL],
+                                         current_running_normal[AX_PUL] / 4);
+    } else {
+        tmc2130_init_axis_current_stealth(AX_PUL, current_holding_stealth[AX_PUL],
+                                          current_running_stealth[AX_PUL] / 4);
+    }
+
+    // 450 steps with 454 µSteps/s
+    for (int i = 0; i <= 450; i++) {
+        do_pulley_step();
+        delayMicroseconds(2200);
+    }
+#endif
 
     engage_filament_pulley(false);
     tmc2130_disable_axis(AX_PUL, tmc2130_mode);
@@ -899,6 +941,9 @@ MotReturn homeIdlerSmooth()
  *   in homing commands, to prevent endless loops and stack overflow.
  * @return
  */
+// TODO 3: compensate delay for computation time, to get accurate speeds
+// TODO 3: add callback or another parameter, which can stop the motion 
+// (e.g. for testing FINDA, timeout, soft stall guard limits, push buttons...)
 MotReturn moveSmooth(uint8_t axis, int steps, int speed,
                      bool rehomeOnFail, bool withStallDetection)
 {

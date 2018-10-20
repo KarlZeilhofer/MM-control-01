@@ -19,7 +19,7 @@ void engage_filament_pulley(bool engage);
 
 bool isFilamentInFinda();
 void load_filament_withSensor();
-void load_filament_intoExtruder();
+void load_filament_into_extruder();
 
 void unload_filament_withSensor();
 void set_positions(int _current_extruder, int _next_extruder);

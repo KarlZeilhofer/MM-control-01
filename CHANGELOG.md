@@ -21,7 +21,7 @@ Changelog of MMU 2.0 Firmware
 * changed version to a dummy version 9.9.9
 * moved many stepper constants into config.h
 * **implement motion control** with acceleration
-  fixes issue #52
+  mostly fixes issue #52
 * implement fast homing of selector
 * replaced all calls of `digitalRead(A1)` by `isFilamentInFinda()`
 * moved menu request button on boot before homing
@@ -44,9 +44,6 @@ Changelog of MMU 2.0 Firmware
 * add define TESTING_STEALTH
 * defined max. speeds and acceleration for normal and stealth mode
 
-## TODO
-* undo: simplified `load_filament_intoExtruder()` by using move-commands
-  needed when compiled without TESTING
 
 
 # V1.0.2

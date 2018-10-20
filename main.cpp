@@ -348,7 +348,7 @@ extern "C" {
                         0) // C0 continue loading current filament (used after T-code), maybe add different code for
                     // each extruder (the same way as T-codes) in the future?
                 {
-                    load_filament_intoExtruder();
+                    load_filament_into_extruder();
                     fprintf_P(inout, PSTR("ok\n"));
                 }
             } else if (sscanf_P(line, PSTR("E%d"), &value) > 0) {
@@ -410,8 +410,6 @@ void testing_loop()
     }
 
     if (steps) {
-        // TODO 0: entweder stall guard tunen, dass es passt, oder
-        // stall detection deaktivieren für diese achse!
         moveSmooth(AX_IDL, steps, speed);
     }
 
