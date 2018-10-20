@@ -12,6 +12,7 @@ const int ButtonPin = A2; // we use an analog input with different DC-levels for
 
 void settings_bowden_length();
 
+
 //! @brief Select filament for bowden length calibration
 //!
 //! Filaments are selected by left and right buttons, calibration is activated by middle button.
@@ -71,6 +72,8 @@ void setupMenu()
     bool _exit = false;
     bool eraseLocked = true;
 
+
+
     do {
         shr16_set_led(1 << 2 * 4);
         delay(1);
@@ -99,7 +102,7 @@ void setupMenu()
                     _exit = true;
                 }
                 break;
-            case 3: // unlock erase
+            case 3: //unlock erase
                 eraseLocked = false;
                 break;
             case 4: // exit menu
@@ -118,6 +121,7 @@ void setupMenu()
         }
 
     } while (!_exit);
+
 
     shr16_set_led(0x000);
     delay(400);
@@ -157,21 +161,21 @@ void settings_bowden_length()
         BowdenLength bowdenLength;
         load_filament_withSensor();
 
-        tmc2130_init_axis_current(AX_PUL, 1, 30);
+        tmc2130_init_axis_current_normal(AX_PUL, 1, 30);
         do {
 
             switch (buttonClicked()) {
             case Btn::right:
                 if (bowdenLength.decrease()) {
-                    move_pulley(-bowdenLength.StepSize);
-                    delay(100);
+                    move(0, 0, -bowdenLength.stepSize);
+                    delay(400);
                 }
                 break;
 
             case Btn::left:
                 if (bowdenLength.increase()) {
-                    move_pulley(bowdenLength.StepSize);
-                    delay(100);
+                    move(0, 0, bowdenLength.stepSize);
+                    delay(400);
                 }
                 break;
             default:
@@ -184,6 +188,8 @@ void settings_bowden_length()
             delay(10);
             shr16_set_led(2 << 2 * 1);
             delay(50);
+
+        } while (buttonClicked() != Btn::middle);
 
         } while (buttonClicked() != Btn::middle);
 

@@ -65,7 +65,7 @@ void shr16_set_led(uint16_t led) // TODO 2: provide macros with easily readable 
  */
 void shr16_set_ena(uint8_t ena)
 {
-    ena ^= 7; // invert bits, since TMC2130 has active low inputs.
+    ena ^= 7;
     ena = ((ena & 1) << 1) | ((ena & 2) << 2) | ((ena & 4) << 3);
     shr16_write((shr16_v & ~SHR16_ENA_MSK) | ena);
 }

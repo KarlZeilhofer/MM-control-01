@@ -27,12 +27,27 @@ bool feed_filament()
     bool _feed = true;
     bool _loaded = false;
 
+<<<<<<<
     int _c = 0;
     int _delay = 0;
     engage_filament_pully(true);
+=======
+    int _c = 0;
+    int _delay = 0;
+    park_idler(true);
+>>>>>>>
 
+<<<<<<<
     set_pulley_dir_push();
     tmc2130_init_axis_current(AX_PUL, 1, 15);
+=======
+    set_pulley_dir_push();
+    if (tmc2130_mode == NORMAL_MODE) {
+        tmc2130_init_axis_current_normal(AX_PUL, 1, 15);
+    } else {
+        tmc2130_init_axis_current_stealth(AX_PUL, 1, 15);    //probably needs tuning of currents
+    }
+>>>>>>>
 
     do {
         do_pulley_step();
@@ -47,6 +62,7 @@ bool feed_filament()
             _delay++;
         };
 
+<<<<<<<
         if (isFilamentInFinda()) {
             _loaded = true;
             _feed = false;
@@ -57,6 +73,18 @@ bool feed_filament()
         }
         delayMicroseconds(4000);
     } while (_feed);
+=======
+        if (digitalRead(A1) == 1) {
+            _loaded = true;
+            _feed = false;
+        };
+        if (buttonClicked() != Btn::none && _delay > 10) {
+            _loaded = false;
+            _feed = false;
+        }
+        delayMicroseconds(4000);
+    } while (_feed);
+>>>>>>>
 
     if (_loaded) {
         // unload to PTFE tube
@@ -67,10 +95,19 @@ bool feed_filament()
         }
     }
 
+<<<<<<<
     tmc2130_init_axis_current(AX_PUL, 0, 0);
     engage_filament_pully(false);
     shr16_set_led(1 << 2 * (4 - active_extruder));
     return true;
+=======
+
+
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    park_idler(false);
+    shr16_set_led(1 << 2 * (4 - active_extruder));
+    return true;
+>>>>>>>
 }
 
 bool switch_extruder_withSensor(int new_extruder)
@@ -82,18 +119,38 @@ bool switch_extruder_withSensor(int new_extruder)
         home();
     }
 
+<<<<<<<
     if (active_extruder == 5) {
         move_selector(-700);
         active_extruder = 4;
     }
+=======
+    if (active_extruder == 5) {
+        move(0, -700, 0);
+        active_extruder = 4;
+    }
+>>>>>>>
 
+<<<<<<<
     toolChanges++;
+=======
 
+>>>>>>>
+
+<<<<<<<
     shr16_set_led(2 << 2 * (4 - active_extruder));
+=======
+    toolChanges++;
+>>>>>>>
 
+<<<<<<<
     previous_extruder = active_extruder;
     active_extruder = new_extruder;
+=======
+    shr16_set_led(2 << 2 * (4 - active_extruder));
+>>>>>>>
 
+<<<<<<<
     if (previous_extruder == active_extruder) {
         if (!isFilamentLoaded) {
             shr16_set_led(2 << 2 * (4 - active_extruder));
@@ -117,6 +174,36 @@ bool switch_extruder_withSensor(int new_extruder)
     shr16_set_led(0x000);
     shr16_set_led(1 << 2 * (4 - active_extruder));
     return _return;
+=======
+    previous_extruder = active_extruder;
+    active_extruder = new_extruder;
+
+    if (previous_extruder == active_extruder) {
+        if (!isFilamentLoaded) {
+            shr16_set_led(2 << 2 * (4 - active_extruder));
+            load_filament_withSensor(); // just load filament if not loaded
+            _return = true;
+        } else {
+            _return = false;  // nothing really happened
+        }
+    } else {
+        if (isFilamentLoaded) {
+            unload_filament_withSensor();    // unload filament first
+        }
+        set_positions(previous_extruder,
+                      active_extruder); // move idler and selector to new filament position
+
+        shr16_set_led(2 << 2 * (4 - active_extruder));
+        load_filament_withSensor(); // load new filament
+        _return = true;
+    }
+
+    shr16_set_led(0x000);
+    shr16_set_led(1 << 2 * (4 - active_extruder));
+    return _return;
+
+
+>>>>>>>
 }
 
 //! @brief select extruder
@@ -139,6 +226,7 @@ bool select_extruder(int new_extruder)
     int previous_extruder = active_extruder;
     active_extruder = new_extruder;
 
+<<<<<<<
     if (previous_extruder == active_extruder) {
         if (!isFilamentLoaded) {
             _return = true;
@@ -153,7 +241,31 @@ bool select_extruder(int new_extruder)
                 //engage_filament_pully(true); // TODO 3: remove deprecated
                 // why should we engage the filament here?
                 // the idler is moved "synchronously" with the selector anyway!
+=======
+    if (previous_extruder == active_extruder) {
+        if (!isFilamentLoaded) {
+            _return = true;
+        }
+    } else {
+        if (new_extruder == 5) {
+            move(0, 700, 0);
+        } else {
+            if (previous_extruder == 5) {
+                move(0, -700, 0);
+            } else {
+                if (isIdlerParked) {
+                    park_idler(true);
+                }
+                set_positions(previous_extruder,
+                              active_extruder); // move idler and selector to new filament position
+                park_idler(false);
+            }
+        }
+        _return = true;
+    }
+>>>>>>>
 
+<<<<<<<
                 set_positions(previous_extruder,
                               active_extruder); // move idler and selector to new filament position
                 //engage_filament_pully(false); // TODO 3: remove deprecated
@@ -165,12 +277,21 @@ bool select_extruder(int new_extruder)
     shr16_set_led(0x000);
     shr16_set_led(1 << 2 * (4 - active_extruder));
     return _return;
+=======
+    shr16_set_led(0x000);
+    shr16_set_led(1 << 2 * (4 - active_extruder));
+    return _return;
+>>>>>>>
 }
 
 bool service_position()
 {
+<<<<<<<
     // TODO 2: fixme, when abs-coords are implemented
     move_selector(600); // TODO 1: check if 600 is ok!
+=======
+    move(0, 600, 0);
+>>>>>>>
 
     return true;
 }

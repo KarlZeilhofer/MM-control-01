@@ -1,7 +1,12 @@
 // config.h - main configuration file
 
+<<<<<<<
 #define FW_VERSION 999 // example: 103 means version 1.0.3
 #define FW_BUILDNR 126 // number of commits in 'master'
+=======
+#define FW_VERSION 102 //example: 103 means version 1.0.3
+#define FW_BUILDNR 132 //number of commits in 'master'
+>>>>>>>
 
 // timer0
 //#define TIMER0_EVERY_1ms    _every_1ms    //1ms callback
@@ -58,6 +63,7 @@
 #define TMC2130_SPCR SPI_SPCR(TMC2130_SPI_RATE, 1, 1, 1, 0)
 #define TMC2130_SPSR SPI_SPSR(TMC2130_SPI_RATE)
 
+<<<<<<<
 // params:
 // SG_THR stallguard treshold (sensitivity), range -64..63
 // the stall guard value represents the load angle. if it reaches 0,
@@ -69,12 +75,40 @@
 #define TMC2130_SG_THR_PUL 5
 #define TMC2130_SG_THR_SEL 12 // 20 didn't work, 15 did, decreased further to 12
 #define TMC2130_SG_THR_IDL 4 // optimized value: 4 (8 and 6 didn't work)
+=======
+//0 - PULLEY
+//1 - SELECTOR
+//2 - IDLER
+#define AX_PUL 0
+#define AX_SEL 1
+#define AX_IDL 2
+>>>>>>>
 
+<<<<<<<
 // TCOOLTHRS coolstep treshold, usable range 400-600, unit is 1/13MHz ~= 75ns
 // below that equivalent speed the stall detection is disabled
 #define TMC2130_TCOOLTHRS_0 450 // 450 = 33.8us which is equal to a speed of 115 full steps/s
 #define TMC2130_TCOOLTHRS_1 450
 #define TMC2130_TCOOLTHRS_2 450 // 4100 1.0e9 ns/second / (200 uSteps/s * 256 uSteps/fullstep / 16 uStesp/fullstep)/75
+=======
+// currents
+#define CURRENT_HOLDING_STEALTH {1, 7, 16}
+#define CURRENT_HOLDING_NORMAL {1, 10, 22}
+#define CURRENT_RUNNING_STEALTH {35, 35, 35}
+#define CURRENT_RUNNING_NORMAL {30, 35, 35}
+#define CURRENT_HOMING {1, 35, 30}
+
+//mode
+#define HOMING_MODE 0
+#define NORMAL_MODE 1
+#define STEALTH_MODE 2
+
+//ADC configuration
+#define ADC_CHAN_MSK      0b0000000000100000 //used AD channels bit mask (ADC5)
+#define ADC_CHAN_CNT      1          //number of used channels)
+#define ADC_OVRSAMPL      1          //oversampling multiplier
+#define ADC_READY         _adc_ready //ready callback
+>>>>>>>
 
 // hold currents
 #define I_HOLD_PUL 1
@@ -142,9 +176,15 @@
 // number of extruders
 #define EXTRUDERS 5
 
+<<<<<<<
 // diagnostic functions
 #define _DIAG
 
 // testing motion controller
 #define TESTING
 
+
+=======
+//diagnostic functions
+//#define _DIAG
+>>>>>>>

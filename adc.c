@@ -11,7 +11,7 @@ uint16_t adc_sim_msk;
 
 #ifdef ADC_READY
 extern void ADC_READY(void);
-#endif // ADC_READY
+#endif //ADC_READY
 
 void adc_init(void)
 {
@@ -74,14 +74,14 @@ void adc_cyc(void)
             if (adc_cnt >= ADC_OVRSAMPL) {
 #ifdef ADC_READY
                 ADC_READY();
-#endif // ADC_READY
+#endif //ADC_READY
                 adc_res();
             }
         }
         adc_mux(adc_chan(index));
         adc_sta = index;
     } else {
-        ADCSRA |= (1 << ADSC); // start conversion
+        ADCSRA |= (1 << ADSC); //start conversion
         adc_sta |= 0x80;
     }
 }
