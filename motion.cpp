@@ -51,7 +51,7 @@ void set_positions(int _current_extruder, int _next_extruder)
     int _idler_steps = (_current_extruder - _next_extruder) * IDLER_STEPS;
 
     move_idler(_idler_steps); // remove this, when abs coordinates are implemented!
-    
+
     if (_next_extruder > 0) {
         int _selector_steps = ((_current_extruder - _next_extruder) * SELECTOR_STEPS) * -1;
         move_selector(_selector_steps);
@@ -60,7 +60,7 @@ void set_positions(int _current_extruder, int _next_extruder)
         for (int c = 2; c > 0; c--) { // touch end 2 times
             moveSmooth(AX_SEL, -4000, 2000, false);
             if (c > 1) {
-               moveSmooth(AX_SEL, 100, 2000, false);
+                moveSmooth(AX_SEL, 100, 2000, false);
             }
         }
         moveSmooth(AX_SEL, 35, 2000, false);
@@ -74,7 +74,7 @@ bool reset_positions(uint8_t axis, int _current_extruder_pos, int _new_extruder_
     bool _return = false;
 
     if (axis == AX_SEL) {
-        
+
         if (digitalRead(A1) == 1) {
             isFilamentLoaded = true;
             return false;
@@ -83,37 +83,45 @@ bool reset_positions(uint8_t axis, int _current_extruder_pos, int _new_extruder_
         int cur_AX_SEL = -1;
         if (_new_extruder_pos == EXTRUDERS) {
             int new_AX_SEL = EXTRUDERS - 1;
-            steps = (((_current_extruder_pos - new_AX_SEL) * SELECTOR_STEPS) * -1) + 700; // amount to service position
+            steps = (((_current_extruder_pos - new_AX_SEL) * SELECTOR_STEPS) * -1) +
+                    700; // amount to service position
         } else {
             if (_current_extruder_pos == EXTRUDERS) {
                 int cur_AX_SEL = EXTRUDERS - 1;
-                steps = (((cur_AX_SEL - _new_extruder_pos) * SELECTOR_STEPS) * -1)-700; // Return from service position
+                steps = (((cur_AX_SEL - _new_extruder_pos) * SELECTOR_STEPS) * -1) -
+                        700; // Return from service position
             } else {
                 steps = ((_current_extruder_pos - _new_extruder_pos) * SELECTOR_STEPS) * -1;
             }
         }
-        if (moveSmooth(AX_SEL, steps, MAX_SPEED_SEL, true, true, acc) == MR_Success) _return = true;
+        if (moveSmooth(AX_SEL, steps, MAX_SPEED_SEL, true, true, acc) == MR_Success) {
+            _return = true;
+        }
     } else if (axis == AX_IDL) {
         int new_AX_IDL = -1;
         if (_new_extruder_pos == EXTRUDERS) {
-          new_AX_IDL = EXTRUDERS - 1;
-        } else new_AX_IDL = _new_extruder_pos;
+            new_AX_IDL = EXTRUDERS - 1;
+        } else {
+            new_AX_IDL = _new_extruder_pos;
+        }
         steps = ((_current_extruder_pos - new_AX_IDL) * IDLER_STEPS);
         isIdlerParked = false;
-        if (moveSmooth(AX_IDL, steps, MAX_SPEED_IDL, true, true, acc) == MR_Success) _return = true;
+        if (moveSmooth(AX_IDL, steps, MAX_SPEED_IDL, true, true, acc) == MR_Success) {
+            _return = true;
+        }
         delay(50);
         engage_filament_pulley(false);
     }
     isFilamentLoaded = false;
     return _return;
-} 
+}
 
 /**
  * @brief Eject Filament
  * move selector sideways and push filament forward little bit, so user can catch it,
  * unpark idler at the end to user can pull filament out
  * @param extruder: extruder channel (0..4)
- */ 
+ */
 void eject_filament(int extruder)
 {
     int selector_position = 0;
@@ -283,8 +291,10 @@ void home(bool doToolSync)
             //set_positions(active_extruder, new_extruder); // move idler and selector to new filament position
             trackToolChanges = 0;
         }
-    } else active_extruder = 0;
-    
+    } else {
+        active_extruder = 0;
+    }
+
     isIdlerParked = false;
     engage_filament_pulley(false);
     shr16_set_led(0x000);
@@ -380,7 +390,8 @@ int set_pulley_direction(int steps)
 MotReturn homeSelectorSmooth()
 {
     for (int c = 2; c > 0; c--) { // touch end 2 times
-        moveSmooth(AX_SEL, 4000, 2000, false); // 3000 is too fast, 2500 works, decreased to 2000 for production
+        moveSmooth(AX_SEL, 4000, 2000,
+                   false); // 3000 is too fast, 2500 works, decreased to 2000 for production
         if (c > 1) {
             moveSmooth(AX_SEL, -300, 2000, false);
         }
@@ -412,7 +423,8 @@ MotReturn homeIdlerSmooth()
 // TODO 3: compensate delay for computation time, to get accurate speeds
 // TODO 3: add callback or another parameter, which can stop the motion
 // (e.g. for testing FINDA, timeout, soft stall guard limits, push buttons...)
-MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail, bool withStallDetection, float acc, bool withFindaDetection)
+MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail, bool withStallDetection,
+                     float acc, bool withFindaDetection)
 {
     MotReturn ret = MR_Success;
 
@@ -459,8 +471,12 @@ MotReturn moveSmooth(uint8_t axis, int steps, int speed, bool rehomeOnFail, bool
                 delay(50); // delay to release the stall detection
                 return MR_Failed;
             }
-            if (withFindaDetection && steps > 0 && digitalRead(A1) == 1) return MR_Success;
-            if (withFindaDetection && steps < 0 && digitalRead(A1) == 0) return MR_Success;
+            if (withFindaDetection && steps > 0 && digitalRead(A1) == 1) {
+                return MR_Success;
+            }
+            if (withFindaDetection && steps < 0 && digitalRead(A1) == 0) {
+                return MR_Success;
+            }
             break;
         case AX_IDL:
             PIN_STP_IDL_HIGH;
